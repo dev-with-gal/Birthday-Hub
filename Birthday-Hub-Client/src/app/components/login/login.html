@@ -1,0 +1,36 @@
+<main class="login" dir="rtl" lang="he">
+  <h1 class="login__title">התחברות</h1>
+
+  <form class="login__form" method="post">
+    <div class="login__field">
+      <label class="login__label" for="email">כתובת אימייל</label>
+      <input
+        class="login__input"
+        id="email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        required
+      />
+    </div>
+
+    <div class="login__field">
+      <label class="login__label" for="password">סיסמה</label>
+      <input
+        class="login__input"
+        id="password"
+        name="password"
+        type="password"
+        autocomplete="current-password"
+        required
+      />
+    </div>
+
+    <button class="login__submit" type="submit">התחברות</button>
+  </form>
+
+  <p class="login__signup-prompt">אין לך חשבון?</p>
+  <button class="login__signup-button" type="button" onclick="window.location.href = '/signup'">
+    הרשמה
+  </button>
+</main>

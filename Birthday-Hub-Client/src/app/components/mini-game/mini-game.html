@@ -1,0 +1,33 @@
+<section class="game">
+  <h2>מי הכי מבוגר?</h2>
+  <p>סדרו את החברים מהמבוגר ביותר לצעיר ביותר.</p>
+
+  <ol class="members">
+    <li *ngFor="let member of orderedMembers; let i = index">
+      <span>{{ member.name }}</span>
+      <span class="controls">
+        <button type="button" (click)="move(i, -1)" [disabled]="i === 0" aria-label="העבר למעלה">
+          ↑
+        </button>
+        <button
+          type="button"
+          (click)="move(i, 1)"
+          [disabled]="i === orderedMembers.length - 1"
+          aria-label="העבר למטה"
+        >
+          ↓
+        </button>
+      </span>
+    </li>
+  </ol>
+
+  <div class="actions">
+    <button type="button" (click)="checkOrder()" [disabled]="orderedMembers.length !== 4">
+      בדיקת הסדר
+    </button>
+    <button type="button" class="secondary" (click)="newRound()">סיבוב חדש</button>
+  </div>
+
+  <p class="message" aria-live="polite">{{ message }}</p>
+  <p *ngIf="correctCount !== null" aria-live="polite">{{ correctCount }} מתוך 4 במיקום הנכון</p>
+</section>

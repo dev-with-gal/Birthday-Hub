@@ -1,0 +1,17 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.requests {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 1rem;
+  direction: rtl;
+}
+
+.requests app-request-item {
+  width: min(100%, 32rem);
+}

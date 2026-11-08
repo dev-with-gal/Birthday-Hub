@@ -1,0 +1,18 @@
+<div class="home-container">
+  <h1>ימי הולדת בחברה</h1>
+  <p>חגגו עם העמיתים שלכם!</p>
+
+  @for (department of groupedEmployees() | keyvalue; track department.key) {
+    <section class="department-section">
+      <h2>{{ department.key }}</h2>
+
+      <div class="birthday-grid">
+        @for (employee of department.value; track employee.id) {
+          <app-birthday-card [employee]="employee" />
+        }
+      </div>
+    </section>
+  }
+
+  <app-new-request></app-new-request>
+</div>

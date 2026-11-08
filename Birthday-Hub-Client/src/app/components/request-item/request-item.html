@@ -1,0 +1,14 @@
+<article class="request-card">
+  <img *ngIf="imageSrc" class="request-image" [src]="imageSrc" [alt]="request.name" />
+
+  <div class="request-details">
+    <h3>{{ request.name }}</h3>
+    <p><strong>Department:</strong> {{ request.department }}</p>
+    <p><strong>Birthdate:</strong> {{ request.birthdate | date }}</p>
+  </div>
+
+  <div class="request-actions">
+    <button type="button" class="approve-button" (click)="approved.emit(request)">אישור</button>
+    <button type="button" class="reject-button" (click)="rejected.emit(request)">דחייה</button>
+  </div>
+</article>
