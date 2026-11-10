@@ -1,8 +1,19 @@
-<button class="floating-add" type="button" aria-label="יצירת בקשה חדשה" (click)="openModal()">
+<button
+  class="floating-add"
+  type="button"
+  aria-label="יצירת בקשה חדשה"
+  [disabled]="!auth.authenticated()"
+  [title]="auth.authenticated() ? 'יצירת בקשה חדשה' : 'יש להתחבר כדי ליצור בקשה'"
+  (click)="openModal()"
+>
   +
 </button>
 
-<div *ngIf="isOpen" class="modal-backdrop" (click)="closeModal()">
+<p *ngIf="successMessage()" class="request-status" role="status">
+  {{ successMessage() }}
+</p>
+
+<div *ngIf="isOpen()" class="modal-backdrop" (click)="closeModal()">
   <section
     class="request-modal"
     role="dialog"
@@ -15,12 +26,21 @@
     <h2 id="request-title">בקשה חדשה</h2>
 
     <form (ngSubmit)="submitRequest()">
-      <label for="request-name">שם</label>
-      <input id="request-name" name="name" type="text" [(ngModel)]="name" required />
+      <label for="request-first-name">שם פרטי</label>
+      <input
+        id="request-first-name"
+        name="firstName"
+        type="text"
+        [(ngModel)]="firstName"
+        required
+      />
+
+      <label for="request-last-name">שם משפחה</label>
+      <input id="request-last-name" name="lastName" type="text" [(ngModel)]="lastName" required />
 
       <label for="department">מחלקה</label>
-      <select id="department" name="department" required>
-        <option value="" disabled selected>בחרו מחלקה</option>
+      <select id="department" name="department" [(ngModel)]="department" required>
+        <option value="" disabled>בחרו מחלקה</option>
         <option *ngFor="let department of departments" [value]="department">
           {{ department }}
         </option>
@@ -45,7 +65,13 @@
         alt="תצוגה מקדימה של התמונה שנבחרה"
       />
 
-      <button class="submit-button" type="submit">יצירת בקשה</button>
+      <p *ngIf="errorMessage()" class="request-error" role="alert">
+        {{ errorMessage() }}
+      </p>
+
+      <button class="submit-button" type="submit" [disabled]="isSubmitting()">
+        {{ isSubmitting() ? 'שולח...' : 'יצירת בקשה' }}
+      </button>
     </form>
   </section>
 </div>

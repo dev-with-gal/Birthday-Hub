@@ -1,2 +1,24 @@
-<app-requests [requests]="applications"></app-requests>
-<app-new-request></app-new-request>
+<main class="all-requests" dir="rtl">
+  <header class="all-requests__header">
+    <h1>כל הבקשות</h1>
+    <app-new-request (applicationCreated)="loadApplications()"></app-new-request>
+  </header>
+
+  @if (errorMessage()) {
+    <p role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (isLoading()) {
+    <p role="status">טוען בקשות...</p>
+  } @else if (applications().length === 0) {
+    <p>אין בקשות להצגה</p>
+  } @else {
+    <app-requests
+      [requests]="applications()"
+      [canReview]="canReview()"
+      [updatingId]="updatingId()"
+      (approved)="review($event, 'APPROVED')"
+      (rejected)="review($event, 'REJECTED')"
+    ></app-requests>
+  }
+</main>

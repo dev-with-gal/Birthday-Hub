@@ -23,6 +23,7 @@ export class AuthService {
   private readonly expirationKey = 'birthday-hub.access-token-expiration';
 
   readonly authenticated = signal(this.hasValidSession());
+  readonly currentUser = signal<AuthUser | null>(this.authenticated() ? this.readUser() : null);
 
   get accessToken(): string | null {
     return this.isLoggedIn() ? sessionStorage.getItem(this.tokenKey) : null;
@@ -35,6 +36,8 @@ export class AuthService {
   startSession(response: LoginResponse): void {
     sessionStorage.setItem(this.tokenKey, response.accessToken);
     sessionStorage.setItem(this.expirationKey, String(Date.now() + response.expiresIn * 1000));
+    sessionStorage.setItem('birthday-hub.user', JSON.stringify(response.user));
+    this.currentUser.set(response.user);
     this.authenticated.set(true);
   }
 
@@ -49,6 +52,8 @@ export class AuthService {
   logout(): void {
     sessionStorage.removeItem(this.tokenKey);
     sessionStorage.removeItem(this.expirationKey);
+    sessionStorage.removeItem('birthday-hub.user');
+    this.currentUser.set(null);
     this.authenticated.set(false);
     void this.router.navigateByUrl('/login');
   }
@@ -63,8 +68,24 @@ export class AuthService {
     if (!token || !Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
       sessionStorage.removeItem(this.tokenKey);
       sessionStorage.removeItem(this.expirationKey);
+      sessionStorage.removeItem('birthday-hub.user');
       return false;
     }
     return true;
+  }
+
+  private readUser(): AuthUser | null {
+    try {
+      const value = sessionStorage.getItem('birthday-hub.user');
+      if (!value) return null;
+      const user = JSON.parse(value) as AuthUser;
+      return typeof user.id === 'string' &&
+        typeof user.email === 'string' &&
+        typeof user.role === 'string'
+        ? user
+        : null;
+    } catch {
+      return null;
+    }
   }
 }

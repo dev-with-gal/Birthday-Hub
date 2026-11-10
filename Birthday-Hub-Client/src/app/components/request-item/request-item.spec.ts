@@ -12,6 +12,15 @@ describe('RequestItem', () => {
 
     fixture = TestBed.createComponent(RequestItem);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('request', {
+      id: 'application-id',
+      applicationNumber: 1,
+      firstName: 'Test',
+      lastName: 'User',
+      department: 'Engineering',
+      birthday: '2000-01-01',
+      status: 'PENDING',
+    });
     await fixture.whenStable();
   });
 

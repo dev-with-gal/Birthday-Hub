@@ -1,0 +1,70 @@
+.my-requests {
+  width: min(100% - 2rem, 56rem);
+  margin: 2rem auto;
+}
+
+.my-requests__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.my-requests__header h1,
+.my-requests__item h2,
+.my-requests__item p {
+  margin: 0;
+}
+
+.my-requests__list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.my-requests__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #d7dce2;
+  border-radius: 0.5rem;
+  background: #fff;
+}
+
+.my-requests__item h2 {
+  font-size: 1rem;
+}
+
+.my-requests__item p,
+.my-requests__item time {
+  color: #475569;
+}
+
+.my-requests__status {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  background: #f1f5f9;
+}
+
+.my-requests__status[data-status='APPROVED'] {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.my-requests__status[data-status='REJECTED'] {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+@media (max-width: 600px) {
+  .my-requests__item {
+    grid-template-columns: 1fr auto;
+  }
+
+  .my-requests__status {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+}

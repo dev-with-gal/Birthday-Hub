@@ -1,0 +1,23 @@
+.all-requests {
+  width: min(100% - 2rem, 56rem);
+  margin: 2rem auto;
+}
+
+.all-requests__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.all-requests__header h1 {
+  margin: 0;
+}
+
+@media (max-width: 520px) {
+  .all-requests__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

@@ -11,6 +11,10 @@ interface AuthenticatedRequest {
   user?: { sub: string; email: string; role: string };
 }
 
+export interface AuthenticatedHttpRequest extends Request {
+  user: { sub: string; email: string; role: string };
+}
+
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(private readonly jwt: JwtService) {}
