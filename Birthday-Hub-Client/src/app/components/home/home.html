@@ -2,16 +2,24 @@
   <h1>ימי הולדת בחברה</h1>
   <p>חגגו עם העמיתים שלכם!</p>
 
-  @for (department of groupedEmployees() | keyvalue; track department.key) {
-    <section class="department-section">
-      <h2>{{ department.key }}</h2>
+  @if (isLoading()) {
+    <p role="status">טוען ימי הולדת...</p>
+  } @else if (errorMessage()) {
+    <p role="alert">{{ errorMessage() }}</p>
+  } @else if (employees().length === 0) {
+    <p>אין ימי הולדת מאושרים להצגה</p>
+  } @else {
+    @for (department of groupedEmployees() | keyvalue; track department.key) {
+      <section class="department-section">
+        <h2>{{ department.key }}</h2>
 
-      <div class="birthday-grid">
-        @for (employee of department.value; track employee.id) {
-          <app-birthday-card [employee]="employee" />
-        }
-      </div>
-    </section>
+        <div class="birthday-grid">
+          @for (employee of department.value; track employee.id) {
+            <app-birthday-card [employee]="employee" />
+          }
+        </div>
+      </section>
+    }
   }
 
   <app-new-request></app-new-request>

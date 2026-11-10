@@ -50,6 +50,10 @@ export class ApplicationsApiService {
     return this.http.get<ApplicationResponse[]>(`${this.applicationsUrl}/mine`);
   }
 
+  findApproved(): Observable<ApplicationResponse[]> {
+    return this.http.get<ApplicationResponse[]>(`${this.applicationsUrl}/approved`);
+  }
+
   review(id: string, status: ApplicationReviewStatus): Observable<unknown> {
     return this.http.patch(`${this.applicationsUrl}/${id}/status`, { status });
   }

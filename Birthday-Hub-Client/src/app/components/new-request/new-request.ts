@@ -25,8 +25,6 @@ export class NewRequest {
   lastName = '';
   department = '';
   birthdate = '';
-  image: File | null = null;
-  imagePreview: string | null = null;
   readonly errorMessage = signal('');
   readonly successMessage = signal('');
   readonly isSubmitting = signal(false);
@@ -40,25 +38,6 @@ export class NewRequest {
 
   closeModal(): void {
     this.isOpen.set(false);
-  }
-
-  onImageSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-
-    if (!file || !file.type.startsWith('image/')) {
-      this.image = null;
-      this.imagePreview = null;
-      return;
-    }
-
-    this.image = file;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.imagePreview = typeof reader.result === 'string' ? reader.result : null;
-    };
-    reader.readAsDataURL(file);
   }
 
   submitRequest(): void {
@@ -92,8 +71,6 @@ export class NewRequest {
           this.lastName = '';
           this.department = '';
           this.birthdate = '';
-          this.image = null;
-          this.imagePreview = null;
           this.closeModal();
         },
         error: (error: { status?: number }) => {

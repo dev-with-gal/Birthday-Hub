@@ -40,7 +40,7 @@
       </svg>
       מרכז ימי ההולדת<br />
     </h1>
-    <p class="header-greeting">שלום, משתמש</p>
+    <p class="header-greeting">שלום, {{ auth.currentUser()?.email ?? 'אורח' }}</p>
   </div>
 
   <nav class="header-links" aria-label="ניווט ראשי">

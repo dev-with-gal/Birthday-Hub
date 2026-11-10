@@ -1,8 +1,9 @@
+import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { Employee } from '../../models/employee';
 
 @Component({
-  imports: [],
+  imports: [DatePipe],
   selector: 'app-birthday-card',
   styleUrl: './birthday-card.scss',
   templateUrl: './birthday-card.html',

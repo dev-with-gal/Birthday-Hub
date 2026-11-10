@@ -15,21 +15,28 @@ import { CreateApplicationDto } from './dto/create-application.dto.js';
 import { ReviewApplicationDto } from './dto/review-application.dto.js';
 
 @Controller('applications')
-@UseGuards(JwtAuthGuard)
 export class ApplicationsController {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   findAll() {
     return this.applicationsService.findAll();
   }
 
   @Get('mine')
+  @UseGuards(JwtAuthGuard)
   findMine(@Req() request: AuthenticatedHttpRequest) {
     return this.applicationsService.findMine(request.user.sub);
   }
 
+  @Get('approved')
+  findApproved() {
+    return this.applicationsService.findApproved();
+  }
+
   @Post()
+  @UseGuards(JwtAuthGuard)
   create(
     @Body() dto: CreateApplicationDto,
     @Req() request: AuthenticatedHttpRequest,
@@ -38,6 +45,7 @@ export class ApplicationsController {
   }
 
   @Patch(':id/status')
+  @UseGuards(JwtAuthGuard)
   review(
     @Param('id') id: string,
     @Body() dto: ReviewApplicationDto,

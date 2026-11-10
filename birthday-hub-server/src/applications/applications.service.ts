@@ -63,6 +63,22 @@ export class ApplicationsService {
       .all();
   }
 
+  findApproved() {
+    return this.prisma.client.orm.public.BirthdayApplication.select(
+      'id',
+      'applicationNumber',
+      'firstName',
+      'lastName',
+      'birthday',
+      'status',
+      'createdAt',
+    )
+      .where({ status: 'APPROVED' })
+      .include('department', (department) => department.select('name'))
+      .orderBy((application) => application.birthday.asc())
+      .all();
+  }
+
   async review(
     id: string,
     dto: ReviewApplicationDto,

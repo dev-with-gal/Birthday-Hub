@@ -49,22 +49,6 @@
       <label for="request-birthdate">תאריך לידה</label>
       <input id="request-birthdate" name="birthdate" type="date" [(ngModel)]="birthdate" required />
 
-      <label for="request-image">תמונה</label>
-      <input
-        id="request-image"
-        name="image"
-        type="file"
-        accept="image/*"
-        (change)="onImageSelected($event)"
-      />
-
-      <img
-        *ngIf="imagePreview"
-        class="image-preview"
-        [src]="imagePreview"
-        alt="תצוגה מקדימה של התמונה שנבחרה"
-      />
-
       <p *ngIf="errorMessage()" class="request-error" role="alert">
         {{ errorMessage() }}
       </p>
