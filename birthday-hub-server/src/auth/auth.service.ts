@@ -14,7 +14,9 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     const email =
-      typeof loginDto.email === 'string' ? loginDto.email.trim().toLowerCase() : '';
+      typeof loginDto.email === 'string'
+        ? loginDto.email.trim().toLowerCase()
+        : '';
     const password = loginDto.password;
     const user = email
       ? await this.prisma.client.orm.public.User.select(
@@ -48,7 +50,10 @@ export class AuthService {
     };
   }
 
-  private verifyPassword(password: string, encodedHash: string): Promise<boolean> {
+  private verifyPassword(
+    password: string,
+    encodedHash: string,
+  ): Promise<boolean> {
     const [saltHex, hashHex] = encodedHash.split(':');
     if (
       !saltHex ||

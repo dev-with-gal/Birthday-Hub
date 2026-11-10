@@ -29,18 +29,12 @@ export class AuthService {
   }
 
   login(credentials: { email: string; password: string }): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(
-      'http://localhost:3000/auth/login',
-      credentials,
-    );
+    return this.http.post<LoginResponse>('http://localhost:3000/auth/login', credentials);
   }
 
   startSession(response: LoginResponse): void {
     sessionStorage.setItem(this.tokenKey, response.accessToken);
-    sessionStorage.setItem(
-      this.expirationKey,
-      String(Date.now() + response.expiresIn * 1000),
-    );
+    sessionStorage.setItem(this.expirationKey, String(Date.now() + response.expiresIn * 1000));
     this.authenticated.set(true);
   }
 

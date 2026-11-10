@@ -39,9 +39,7 @@ export class Login {
           this.auth.startSession(session);
           const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
           const safeReturnUrl =
-            returnUrl?.startsWith('/') && !returnUrl.startsWith('//')
-              ? returnUrl
-              : '/';
+            returnUrl?.startsWith('/') && !returnUrl.startsWith('//') ? returnUrl : '/';
           void this.router.navigateByUrl(safeReturnUrl);
         },
         error: (error: { status?: number }) => {
