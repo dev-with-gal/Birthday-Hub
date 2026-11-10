@@ -1,6 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { finalize } from 'rxjs';
+import { Router } from '@angular/router';
+import { finalize, switchMap } from 'rxjs';
+import { AuthService } from '../../services/auth.service';
 import { UsersApiService } from '../../services/users-api.service';
 
 @Component({
@@ -12,6 +14,8 @@ import { UsersApiService } from '../../services/users-api.service';
 export class Signup {
   private readonly formBuilder = inject(FormBuilder);
   private readonly usersApi = inject(UsersApiService);
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
   readonly form = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -19,12 +23,10 @@ export class Signup {
     confirmPassword: ['', Validators.required],
   });
   readonly errorMessage = signal('');
-  readonly successMessage = signal('');
   readonly isSubmitting = signal(false);
 
   submit(): void {
     this.errorMessage.set('');
-    this.successMessage.set('');
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -40,11 +42,14 @@ export class Signup {
     this.isSubmitting.set(true);
     this.usersApi
       .create({ email, password })
-      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .pipe(
+        switchMap(() => this.auth.login({ email, password })),
+        finalize(() => this.isSubmitting.set(false)),
+      )
       .subscribe({
-        next: () => {
-          this.successMessage.set('החשבון נוצר בהצלחה');
-          this.form.reset();
+        next: (session) => {
+          this.auth.startSession(session);
+          void this.router.navigateByUrl('/');
         },
         error: (error: { status?: number }) => {
           this.errorMessage.set(

@@ -45,25 +45,36 @@
 
   <nav class="header-links" aria-label="ניווט ראשי">
     <a class="header-link" href="/">בית</a>
-    <a class="header-link" href="/my-requests">הבקשות שלי</a>
-    <a class="header-link" href="/all-requests">בקשות</a>
-    <a class="header-link" href="/mini-game">משחק</a>
-    <a class="header-link" href="/login" aria-label="התנתקות" title="התנתקות">
-      <svg
-        aria-hidden="true"
-        viewBox="0 0 24 24"
-        width="20"
-        height="20"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+    @if (auth.authenticated()) {
+      <a class="header-link" href="/my-requests">הבקשות שלי</a>
+      <a class="header-link" href="/all-requests">בקשות</a>
+      <a class="header-link" href="/mini-game">משחק</a>
+      <a
+        class="header-link"
+        href="/login"
+        aria-label="התנתקות"
+        title="התנתקות"
+        (click)="logout($event)"
       >
-        <path d="M10 17l5-5-5-5" />
-        <path d="M15 12H3" />
-        <path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6" />
-      </svg>
-    </a>
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 24 24"
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M10 17l5-5-5-5" />
+          <path d="M15 12H3" />
+          <path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6" />
+        </svg>
+      </a>
+    } @else {
+      <a class="header-link" href="/login">התחברות</a>
+      <a class="header-link" href="/signup">הרשמה</a>
+    }
   </nav>
 </header>

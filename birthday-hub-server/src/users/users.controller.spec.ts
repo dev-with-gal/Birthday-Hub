@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller.js';
 import { UsersService } from './users.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -10,7 +11,10 @@ describe('UsersController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
       providers: [UsersService, { provide: PrismaService, useValue: {} }],
-    }).compile();
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useValue({ canActivate: () => true })
+      .compile();
 
     controller = module.get<UsersController>(UsersController);
   });

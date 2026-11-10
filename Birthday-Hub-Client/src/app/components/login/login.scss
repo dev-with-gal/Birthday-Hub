@@ -93,9 +93,12 @@
 }
 
 .login__signup-button {
+  display: block;
   width: 100%;
   color: #5d42b0;
   background: #f1edfb;
+  text-align: center;
+  text-decoration: none;
 
   &:hover {
     background: #e7e0f8;
