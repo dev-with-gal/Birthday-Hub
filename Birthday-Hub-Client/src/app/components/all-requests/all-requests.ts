@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { RequestItemData } from '../request-item/request-item';
 import { Requests } from '../requests/requests';
+import { NewRequest } from '../new-request/new-request';
 
 const MOCK_APPLICATIONS: RequestItemData[] = [
   { name: 'דנה ראשוני', birthdate: '1988-04-12', department: 'הנדסה', image: null },
@@ -12,7 +13,7 @@ const MOCK_APPLICATIONS: RequestItemData[] = [
 @Component({
   selector: 'app-all-requests',
   standalone: true,
-  imports: [Requests],
+  imports: [Requests, NewRequest],
   templateUrl: './all-requests.html',
   styleUrl: './all-requests.scss',
 })

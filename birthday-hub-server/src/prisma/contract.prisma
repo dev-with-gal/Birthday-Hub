@@ -1,0 +1,80 @@
+
+// use prisma-8
+
+enum Role {
+  EMPLOYEE
+  COORDINATOR
+  HR_MANAGER
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id           Uuid   @id @onCreate(uuid())
+  email        String @unique
+  passwordHash String
+
+  role Role @default(EMPLOYEE)
+
+  submittedApplications BirthdayApplication[] @relation("ApplicationSubmitter")
+  reviewedApplications  BirthdayApplication[] @relation("ApplicationApprover")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @onCreate(now()) @onUpdate(now())
+
+  @@index([role])
+}
+
+model Department {
+  id          Uuid   @id @onCreate(uuid())
+  name        String @unique
+  description String?
+
+  birthdayApplications BirthdayApplication[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @onCreate(now()) @onUpdate(now())
+}
+
+model BirthdayApplication {
+  id                Uuid @id @onCreate(uuid())
+  applicationNumber Int  @unique @default(autoincrement())
+
+  firstName String
+  lastName  String
+  birthday  DateTime
+
+  departmentId Uuid
+  department   Department @relation(
+    fields: [departmentId],
+    references: [id]
+  )
+
+  submittedById Uuid
+  submittedBy   User @relation(
+    "ApplicationSubmitter",
+    fields: [submittedById],
+    references: [id]
+  )
+
+  approvedById Uuid?
+  approvedBy   User? @relation(
+    "ApplicationApprover",
+    fields: [approvedById],
+    references: [id]
+  )
+
+  status     ApplicationStatus @default(PENDING)
+  reviewedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @onCreate(now()) @onUpdate(now())
+
+  @@index([departmentId])
+  @@index([submittedById])
+  @@index([status])
+}
