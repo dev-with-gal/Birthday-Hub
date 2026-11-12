@@ -1,9 +1,9 @@
 <button
   class="floating-add"
   type="button"
-  aria-label="יצירת בקשה חדשה"
+  [attr.aria-label]="text.requestForm.createTitle"
   [disabled]="!auth.authenticated()"
-  [title]="auth.authenticated() ? 'יצירת בקשה חדשה' : 'יש להתחבר כדי ליצור בקשה'"
+  [title]="auth.authenticated() ? text.requestForm.createTitle : text.requestForm.loginRequired"
   (click)="openModal()"
 >
   +
@@ -21,12 +21,19 @@
     aria-labelledby="request-title"
     (click)="$event.stopPropagation()"
   >
-    <button class="close-button" type="button" aria-label="סגירה" (click)="closeModal()">×</button>
+    <button
+      class="close-button"
+      type="button"
+      [attr.aria-label]="text.requestForm.close"
+      (click)="closeModal()"
+    >
+      ×
+    </button>
 
-    <h2 id="request-title">בקשה חדשה</h2>
+    <h2 id="request-title">{{ text.requestForm.title }}</h2>
 
     <form (ngSubmit)="submitRequest()">
-      <label for="request-first-name">שם פרטי</label>
+      <label for="request-first-name">{{ text.requestForm.firstName }}</label>
       <input
         id="request-first-name"
         name="firstName"
@@ -35,18 +42,18 @@
         required
       />
 
-      <label for="request-last-name">שם משפחה</label>
+      <label for="request-last-name">{{ text.requestForm.lastName }}</label>
       <input id="request-last-name" name="lastName" type="text" [(ngModel)]="lastName" required />
 
-      <label for="department">מחלקה</label>
+      <label for="department">{{ text.requestForm.department }}</label>
       <select id="department" name="department" [(ngModel)]="department" required>
-        <option value="" disabled>בחרו מחלקה</option>
+        <option value="" disabled>{{ text.requestForm.chooseDepartment }}</option>
         <option *ngFor="let department of departments" [value]="department">
           {{ department }}
         </option>
       </select>
 
-      <label for="request-birthdate">תאריך לידה</label>
+      <label for="request-birthdate">{{ text.requestForm.birthday }}</label>
       <input id="request-birthdate" name="birthdate" type="date" [(ngModel)]="birthdate" required />
 
       <p *ngIf="errorMessage()" class="request-error" role="alert">
@@ -54,7 +61,7 @@
       </p>
 
       <button class="submit-button" type="submit" [disabled]="isSubmitting()">
-        {{ isSubmitting() ? 'שולח...' : 'יצירת בקשה' }}
+        {{ isSubmitting() ? text.requestForm.submitting : text.requestForm.submit }}
       </button>
     </form>
   </section>

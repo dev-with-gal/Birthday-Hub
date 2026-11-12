@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { finalize, switchMap } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { UsersApiService } from '../../services/users-api.service';
+import { he } from '../../i18n/he';
 
 @Component({
   imports: [ReactiveFormsModule],
@@ -12,6 +13,7 @@ import { UsersApiService } from '../../services/users-api.service';
   templateUrl: './signup.html',
 })
 export class Signup {
+  readonly text = he;
   private readonly formBuilder = inject(FormBuilder);
   private readonly usersApi = inject(UsersApiService);
   private readonly auth = inject(AuthService);
@@ -35,7 +37,7 @@ export class Signup {
 
     const { email, password, confirmPassword } = this.form.getRawValue();
     if (password !== confirmPassword) {
-      this.errorMessage.set('הסיסמאות אינן תואמות');
+      this.errorMessage.set(this.text.signup.passwordMismatch);
       return;
     }
 
@@ -53,9 +55,7 @@ export class Signup {
         },
         error: (error: { status?: number }) => {
           this.errorMessage.set(
-            error.status === 409
-              ? 'כבר קיים חשבון עם כתובת האימייל הזו'
-              : 'לא ניתן ליצור חשבון כרגע. נסו שוב מאוחר יותר',
+            error.status === 409 ? this.text.signup.emailExists : this.text.signup.error,
           );
         },
       });

@@ -4,8 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { ApplicationsApiService } from '../../services/applications-api.service';
 import { AuthService } from '../../services/auth.service';
+import { he } from '../../i18n/he';
 
-export const DEPARTMENTS = ['הנדסה', 'שיווק', 'עיצוב', 'מכירות', 'משאבי אנוש'];
+export const DEPARTMENTS: string[] = [...he.requestForm.departments];
 
 @Component({
   selector: 'app-new-request',
@@ -15,6 +16,7 @@ export const DEPARTMENTS = ['הנדסה', 'שיווק', 'עיצוב', 'מכיר�
   styleUrls: ['./new-request.scss'],
 })
 export class NewRequest {
+  readonly text = he;
   @Output() applicationCreated = new EventEmitter<void>();
 
   private readonly applicationsApi = inject(ApplicationsApiService);
@@ -65,7 +67,7 @@ export class NewRequest {
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: () => {
-          this.successMessage.set('הבקשה נוצרה בהצלחה');
+          this.successMessage.set(this.text.requestForm.success);
           this.applicationCreated.emit();
           this.firstName = '';
           this.lastName = '';
@@ -75,9 +77,7 @@ export class NewRequest {
         },
         error: (error: { status?: number }) => {
           this.errorMessage.set(
-            error.status === 401
-              ? 'יש להתחבר כדי ליצור בקשה'
-              : 'לא ניתן ליצור את הבקשה כרגע. נסו שוב מאוחר יותר',
+            error.status === 401 ? this.text.requestForm.loginError : this.text.requestForm.error,
           );
         },
       });

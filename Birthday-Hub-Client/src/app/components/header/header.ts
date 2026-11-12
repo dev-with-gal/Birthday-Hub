@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
+import { he } from '../../i18n/he';
 
 @Component({
   imports: [],
@@ -9,6 +10,7 @@ import { AuthService } from '../../services/auth.service';
 })
 export class Header {
   readonly auth = inject(AuthService);
+  readonly text = he;
 
   logout(event: MouseEvent): void {
     event.preventDefault();

@@ -6,6 +6,7 @@ import {
   ApplicationsApiService,
   ApplicationResponse,
 } from '../../services/applications-api.service';
+import { he } from '../../i18n/he';
 
 @Component({
   imports: [CommonModule, NewRequest],
@@ -14,6 +15,7 @@ import {
   templateUrl: './my-requests.html',
 })
 export class MyRequests implements OnInit {
+  readonly text = he;
   private readonly applicationsApi = inject(ApplicationsApiService);
 
   readonly applications = signal<ApplicationResponse[]>([]);
@@ -32,7 +34,7 @@ export class MyRequests implements OnInit {
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (applications) => this.applications.set(applications),
-        error: () => this.errorMessage.set('לא ניתן לטעון את הבקשות כרגע'),
+        error: () => this.errorMessage.set(this.text.applications.loadError),
       });
   }
 }

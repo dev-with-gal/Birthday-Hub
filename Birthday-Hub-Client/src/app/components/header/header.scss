@@ -5,7 +5,6 @@ $header-blue: #60a5fa;
 
 :host {
   display: block;
-  direction: rtl;
 }
 
 header,
@@ -19,7 +18,6 @@ header,
   color: #f8fafc;
   background-color: $header-background;
   border-bottom: 1px solid $header-border;
-  direction: rtl;
 }
 
 .header-brand-greeting {

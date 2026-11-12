@@ -5,6 +5,7 @@ import { KeyValuePipe } from '@angular/common';
 import { NewRequest } from '../new-request/new-request';
 import { ApplicationsApiService } from '../../services/applications-api.service';
 import { finalize } from 'rxjs';
+import { he } from '../../i18n/he';
 
 @Component({
   selector: 'app-home',
@@ -14,6 +15,7 @@ import { finalize } from 'rxjs';
   styleUrl: './home.scss',
 })
 export class Home implements OnInit {
+  readonly text = he;
   private readonly applicationsApi = inject(ApplicationsApiService);
 
   readonly employees = signal<Employee[]>([]);
@@ -35,7 +37,7 @@ export class Home implements OnInit {
               avatar: null,
             })),
           ),
-        error: () => this.errorMessage.set('לא ניתן לטעון את ימי ההולדת כרגע'),
+        error: () => this.errorMessage.set(this.text.home.loadError),
       });
   }
 

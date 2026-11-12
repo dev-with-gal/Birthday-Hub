@@ -8,6 +8,7 @@ import {
 import { RequestItemData } from '../request-item/request-item';
 import { Requests } from '../requests/requests';
 import { NewRequest } from '../new-request/new-request';
+import { he } from '../../i18n/he';
 
 @Component({
   selector: 'app-all-requests',
@@ -17,6 +18,7 @@ import { NewRequest } from '../new-request/new-request';
   styleUrl: './all-requests.scss',
 })
 export class AllRequests implements OnInit {
+  readonly text = he;
   private readonly applicationsApi = inject(ApplicationsApiService);
   private readonly auth = inject(AuthService);
 
@@ -52,7 +54,7 @@ export class AllRequests implements OnInit {
               status: application.status,
             })),
           ),
-        error: () => this.errorMessage.set('לא ניתן לטעון את הבקשות כרגע'),
+        error: () => this.errorMessage.set(this.text.applications.loadError),
       });
   }
 
@@ -71,7 +73,7 @@ export class AllRequests implements OnInit {
               application.id === id ? { ...application, status } : application,
             ),
           ),
-        error: () => this.errorMessage.set('לא ניתן לעדכן את סטטוס הבקשה'),
+        error: () => this.errorMessage.set(this.text.applications.updateError),
       });
   }
 }

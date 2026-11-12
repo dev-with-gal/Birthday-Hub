@@ -1,9 +1,9 @@
-<main class="login" dir="rtl" lang="he">
-  <h1 class="login__title">התחברות</h1>
+<main class="login">
+  <h1 class="login__title">{{ text.login.title }}</h1>
 
   <form class="login__form" [formGroup]="form" (ngSubmit)="submit()">
     <div class="login__field">
-      <label class="login__label" for="email">כתובת אימייל</label>
+      <label class="login__label" for="email">{{ text.login.email }}</label>
       <input
         class="login__input"
         id="email"
@@ -16,7 +16,7 @@
     </div>
 
     <div class="login__field">
-      <label class="login__label" for="password">סיסמה</label>
+      <label class="login__label" for="password">{{ text.login.password }}</label>
       <input
         class="login__input"
         id="password"
@@ -33,10 +33,10 @@
     }
 
     <button class="login__submit" type="submit" [disabled]="isSubmitting()">
-      {{ isSubmitting() ? 'מתחבר...' : 'התחברות' }}
+      {{ isSubmitting() ? text.login.submitting : text.login.submit }}
     </button>
   </form>
 
-  <p class="login__signup-prompt">אין לך חשבון?</p>
-  <a class="login__signup-button" href="/signup"> הרשמה </a>
+  <p class="login__signup-prompt">{{ text.login.signupPrompt }}</p>
+  <a class="login__signup-button" href="/signup">{{ text.login.signup }}</a>
 </main>

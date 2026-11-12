@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
+import { he } from '../../i18n/he';
 
 @Component({
   imports: [ReactiveFormsModule],
@@ -11,6 +12,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './login.html',
 })
 export class Login {
+  readonly text = he;
   private readonly formBuilder = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
@@ -44,9 +46,7 @@ export class Login {
         },
         error: (error: { status?: number }) => {
           this.errorMessage.set(
-            error.status === 401
-              ? 'כתובת האימייל או הסיסמה שגויים'
-              : 'לא ניתן להתחבר כרגע. נסו שוב מאוחר יותר',
+            error.status === 401 ? this.text.login.invalidCredentials : this.text.login.error,
           );
         },
       });

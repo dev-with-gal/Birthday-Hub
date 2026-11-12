@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { finalize } from 'rxjs';
 import { ApplicationsApiService } from '../../services/applications-api.service';
+import { he } from '../../i18n/he';
 
 export interface MiniGameMember {
   id: string;
@@ -17,6 +18,7 @@ export interface MiniGameMember {
   styleUrl: './mini-game.scss',
 })
 export class MiniGame implements OnInit {
+  readonly text = he;
   private readonly applicationsApi = inject(ApplicationsApiService);
 
   readonly allMembers = signal<MiniGameMember[]>([]);
@@ -40,7 +42,7 @@ export class MiniGame implements OnInit {
           );
           this.newRound();
         },
-        error: () => this.message.set('לא ניתן לטעון את הנתונים כרגע.'),
+        error: () => this.message.set(this.text.miniGame.loadError),
       });
   }
 
@@ -50,7 +52,7 @@ export class MiniGame implements OnInit {
 
     if (this.allMembers().length < 4) {
       this.orderedMembers.set([]);
-      this.message.set('צריך לפחות 4 ימי הולדת מאושרים כדי להתחיל.');
+      this.message.set(this.text.miniGame.notEnoughMembers);
       return;
     }
 
@@ -79,7 +81,7 @@ export class MiniGame implements OnInit {
     );
 
     this.correctCount.set(correctCount);
-    this.message.set(correctCount === 4 ? 'כל הכבוד! הסדר נכון.' : 'נסו שוב!');
+    this.message.set(correctCount === 4 ? this.text.miniGame.correct : this.text.miniGame.tryAgain);
   }
 
   private shuffle<T>(items: T[]): T[] {

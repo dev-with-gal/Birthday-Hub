@@ -1,16 +1,16 @@
-<main class="my-requests" dir="rtl">
+<main class="my-requests">
   <header class="my-requests__header">
-    <h1>הבקשות שלי</h1>
+    <h1>{{ text.applications.myTitle }}</h1>
     <app-new-request (applicationCreated)="loadApplications()"></app-new-request>
   </header>
 
   @if (isLoading()) {
-    <p role="status">טוען בקשות...</p>
+    <p role="status">{{ text.applications.loading }}</p>
   } @else if (errorMessage()) {
     <p role="alert">{{ errorMessage() }}</p>
-    <button type="button" (click)="loadApplications()">נסו שוב</button>
+    <button type="button" (click)="loadApplications()">{{ text.applications.retry }}</button>
   } @else if (applications().length === 0) {
-    <p>אין בקשות להצגה</p>
+    <p>{{ text.applications.empty }}</p>
   } @else {
     <div class="my-requests__list">
       @for (application of applications(); track application.id) {
@@ -25,13 +25,13 @@
           <span class="my-requests__status" [attr.data-status]="application.status">
             @switch (application.status) {
               @case ('PENDING') {
-                ממתינה
+                {{ text.applications.pending }}
               }
               @case ('APPROVED') {
-                אושרה
+                {{ text.applications.approved }}
               }
               @case ('REJECTED') {
-                נדחתה
+                {{ text.applications.rejected }}
               }
             }
           </span>

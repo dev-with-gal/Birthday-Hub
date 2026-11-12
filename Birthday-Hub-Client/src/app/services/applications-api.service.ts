@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface CreateApplicationRequest {
   firstName: string;
@@ -36,7 +37,7 @@ export type ApplicationReviewStatus = 'APPROVED' | 'REJECTED';
 @Injectable({ providedIn: 'root' })
 export class ApplicationsApiService {
   private readonly http = inject(HttpClient);
-  private readonly applicationsUrl = 'http://localhost:3000/applications';
+  private readonly applicationsUrl = `${environment.apiUrl}/applications`;
 
   create(request: CreateApplicationRequest): Observable<CreatedApplicationResponse> {
     return this.http.post<CreatedApplicationResponse>(this.applicationsUrl, request);

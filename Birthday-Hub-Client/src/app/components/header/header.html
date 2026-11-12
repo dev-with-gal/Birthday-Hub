@@ -1,10 +1,10 @@
-<header class="header" dir="rtl">
+<header class="header">
   <div class="header-brand-greeting">
     <h1 class="header-title app-title">
       <svg
         class="header-logo"
         role="img"
-        aria-label="עוגת יום הולדת"
+        [attr.aria-label]="text.header.logoAlt"
         viewBox="0 0 48 48"
         width="40"
         height="40"
@@ -38,22 +38,24 @@
           stroke-linecap="round"
         />
       </svg>
-      מרכז ימי ההולדת<br />
+      {{ text.header.title }}<br />
     </h1>
-    <p class="header-greeting">שלום, {{ auth.currentUser()?.email ?? 'אורח' }}</p>
+    <p class="header-greeting">
+      {{ text.header.greeting }} {{ auth.currentUser()?.email ?? text.header.guest }}
+    </p>
   </div>
 
-  <nav class="header-links" aria-label="ניווט ראשי">
-    <a class="header-link" href="/">בית</a>
+  <nav class="header-links" [attr.aria-label]="text.header.navigation">
+    <a class="header-link" href="/">{{ text.header.home }}</a>
     @if (auth.authenticated()) {
-      <a class="header-link" href="/my-requests">הבקשות שלי</a>
-      <a class="header-link" href="/all-requests">כל הבקשות</a>
-      <a class="header-link" href="/mini-game">משחק</a>
+      <a class="header-link" href="/my-requests">{{ text.header.myRequests }}</a>
+      <a class="header-link" href="/all-requests">{{ text.header.allRequests }}</a>
+      <a class="header-link" href="/mini-game">{{ text.header.miniGame }}</a>
       <a
         class="header-link"
         href="/login"
-        aria-label="התנתקות"
-        title="התנתקות"
+        [attr.aria-label]="text.header.logout"
+        [title]="text.header.logout"
         (click)="logout($event)"
       >
         <svg
@@ -73,8 +75,8 @@
         </svg>
       </a>
     } @else {
-      <a class="header-link" href="/login">התחברות</a>
-      <a class="header-link" href="/signup">הרשמה</a>
+      <a class="header-link" href="/login">{{ text.header.login }}</a>
+      <a class="header-link" href="/signup">{{ text.header.signup }}</a>
     }
   </nav>
 </header>

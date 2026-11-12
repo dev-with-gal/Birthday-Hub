@@ -1,13 +1,13 @@
 <div class="home-container">
-  <h1>ימי הולדת בחברה</h1>
-  <p>חגגו עם העמיתים שלכם!</p>
+  <h1>{{ text.home.title }}</h1>
+  <p>{{ text.home.subtitle }}</p>
 
   @if (isLoading()) {
-    <p role="status">טוען ימי הולדת...</p>
+    <p role="status">{{ text.home.loading }}</p>
   } @else if (errorMessage()) {
     <p role="alert">{{ errorMessage() }}</p>
   } @else if (employees().length === 0) {
-    <p>אין ימי הולדת מאושרים להצגה</p>
+    <p>{{ text.home.empty }}</p>
   } @else {
     @for (department of groupedEmployees() | keyvalue; track department.key) {
       <section class="department-section">

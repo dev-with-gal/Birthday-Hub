@@ -1,20 +1,26 @@
 <article class="request-card">
   <div class="request-details">
     <h3>{{ request.firstName }} {{ request.lastName }}</h3>
-    <p><strong>מספר בקשה:</strong> {{ request.applicationNumber }}</p>
-    <p><strong>מחלקה:</strong> {{ request.department }}</p>
-    <p><strong>תאריך לידה:</strong> {{ request.birthday | date }}</p>
     <p>
-      <strong>סטטוס:</strong>
+      <strong>{{ text.applications.number }}</strong> {{ request.applicationNumber }}
+    </p>
+    <p>
+      <strong>{{ text.applications.department }}</strong> {{ request.department }}
+    </p>
+    <p>
+      <strong>{{ text.applications.birthday }}</strong> {{ request.birthday | date }}
+    </p>
+    <p>
+      <strong>{{ text.applications.status }}</strong>
       @switch (request.status) {
         @case ('PENDING') {
-          ממתינה
+          {{ text.applications.pending }}
         }
         @case ('APPROVED') {
-          אושרה
+          {{ text.applications.approved }}
         }
         @case ('REJECTED') {
-          נדחתה
+          {{ text.applications.rejected }}
         }
       }
     </p>
@@ -28,7 +34,7 @@
         [disabled]="isUpdating"
         (click)="approved.emit(request.id)"
       >
-        אישור
+        {{ text.applications.approve }}
       </button>
       <button
         type="button"
@@ -36,7 +42,7 @@
         [disabled]="isUpdating"
         (click)="rejected.emit(request.id)"
       >
-        דחייה
+        {{ text.applications.reject }}
       </button>
     </div>
   }

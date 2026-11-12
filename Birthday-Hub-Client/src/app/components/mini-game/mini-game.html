@@ -1,9 +1,9 @@
 <section class="game">
-  <h2>מי הכי מבוגר?</h2>
-  <p>סדרו את החברים מהמבוגר ביותר לצעיר ביותר.</p>
+  <h2>{{ text.miniGame.title }}</h2>
+  <p>{{ text.miniGame.instructions }}</p>
 
   @if (isLoading()) {
-    <p role="status">טוען ימי הולדת מאושרים...</p>
+    <p role="status">{{ text.miniGame.loading }}</p>
   }
 
   <div class="members" role="list">
@@ -18,8 +18,16 @@
             type="button"
             class="swap-button"
             [disabled]="isLoading()"
-            [attr.aria-label]="'החלף בין ' + member.name + ' לבין ' + orderedMembers()[i + 1].name"
-            title="החלף בין שני הכרטיסים"
+            [attr.aria-label]="
+              text.miniGame.swap +
+              ': ' +
+              member.name +
+              ' ' +
+              text.miniGame.between +
+              ' ' +
+              orderedMembers()[i + 1].name
+            "
+            [title]="text.miniGame.swap"
             (click)="swapAdjacent(i)"
           >
             ⇅
@@ -35,7 +43,7 @@
       (click)="checkOrder()"
       [disabled]="orderedMembers().length !== 4 || isLoading()"
     >
-      בדיקת הסדר
+      {{ text.miniGame.checkOrder }}
     </button>
     <button
       type="button"
@@ -43,10 +51,12 @@
       (click)="newRound()"
       [disabled]="isLoading() || allMembers().length < 4"
     >
-      סיבוב חדש
+      {{ text.miniGame.newRound }}
     </button>
   </div>
 
   <p class="message" aria-live="polite">{{ message() }}</p>
-  <p *ngIf="correctCount() !== null" aria-live="polite">{{ correctCount() }} מתוך 4 במיקום הנכון</p>
+  <p *ngIf="correctCount() !== null" aria-live="polite">
+    {{ correctCount() }} {{ text.miniGame.correctPositionCount }}
+  </p>
 </section>

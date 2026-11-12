@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { he } from '../../i18n/he';
 
 export interface RequestItemData {
   id: string;
@@ -19,6 +20,7 @@ export interface RequestItemData {
   styleUrls: ['./request-item.scss'],
 })
 export class RequestItem {
+  readonly text = he;
   @Input() request!: RequestItemData;
   @Input() canReview = false;
   @Input() isUpdating = false;
