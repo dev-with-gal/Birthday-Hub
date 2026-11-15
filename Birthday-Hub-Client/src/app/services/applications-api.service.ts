@@ -2,37 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-
-export interface CreateApplicationRequest {
-  firstName: string;
-  lastName: string;
-  birthday: string;
-  department: string;
-}
-
-export interface CreatedApplicationResponse {
-  id: string;
-  applicationNumber: number;
-  firstName: string;
-  lastName: string;
-  birthday: string;
-  departmentId: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
-  createdAt: string;
-}
-
-export interface ApplicationResponse {
-  id: string;
-  applicationNumber: number;
-  firstName: string;
-  lastName: string;
-  birthday: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
-  createdAt: string;
-  department: { name: string };
-}
-
-export type ApplicationReviewStatus = 'APPROVED' | 'REJECTED';
+import {
+  ApplicationResponse,
+  ApplicationReviewStatus,
+  CreatedApplicationResponse,
+  CreateApplicationRequest,
+} from '../types/application.types';
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationsApiService {

@@ -1,10 +1,8 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
-import {
-  ApplicationReviewStatus,
-  ApplicationsApiService,
-} from '../../services/applications-api.service';
+import { ApplicationsApiService } from '../../services/applications-api.service';
+import { ApplicationReviewStatus } from '../../types/application.types';
 import { RequestItemData } from '../request-item/request-item';
 import { Requests } from '../requests/requests';
 import { NewRequest } from '../new-request/new-request';

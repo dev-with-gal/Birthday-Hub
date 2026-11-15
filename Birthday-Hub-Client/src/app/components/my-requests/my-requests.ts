@@ -2,10 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { finalize } from 'rxjs';
 import { NewRequest } from '../new-request/new-request';
-import {
-  ApplicationsApiService,
-  ApplicationResponse,
-} from '../../services/applications-api.service';
+import { ApplicationsApiService } from '../../services/applications-api.service';
+import { ApplicationResponse } from '../../types/application.types';
 import { he } from '../../i18n/he';
 
 @Component({
