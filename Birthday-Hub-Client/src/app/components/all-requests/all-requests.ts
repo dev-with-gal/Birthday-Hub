@@ -2,7 +2,7 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { ApplicationsApiService } from '../../services/applications-api.service';
-import { ApplicationReviewStatus } from '../../types/application.types';
+import { ApplicationResponse, ApplicationReviewStatus } from '../../types/application.types';
 import { RequestItemData } from '../request-item/request-item';
 import { Requests } from '../requests/requests';
 import { NewRequest } from '../new-request/new-request';
@@ -17,6 +17,7 @@ import { he } from '../../i18n/he';
 })
 export class AllRequests implements OnInit {
   readonly text = he;
+  readonly ApplicationReviewStatus = ApplicationReviewStatus;
   private readonly applicationsApi = inject(ApplicationsApiService);
   private readonly auth = inject(AuthService);
 
@@ -40,20 +41,21 @@ export class AllRequests implements OnInit {
       .findAll()
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
-        next: (applications) =>
-          this.applications.set(
-            applications.map((application) => ({
-              id: application.id,
-              applicationNumber: application.applicationNumber,
-              firstName: application.firstName,
-              lastName: application.lastName,
-              department: application.department.name,
-              birthday: application.birthday,
-              status: application.status,
-            })),
-          ),
+        next: (applications) => this.applications.set(applications.map(this.toRequestItem)),
         error: () => this.errorMessage.set(this.text.applications.loadError),
       });
+  }
+
+  private toRequestItem(application: ApplicationResponse): RequestItemData {
+    return {
+      id: application.id,
+      applicationNumber: application.applicationNumber,
+      firstName: application.firstName,
+      lastName: application.lastName,
+      department: application.department.name,
+      birthday: application.birthday,
+      status: application.status,
+    };
   }
 
   review(id: string, status: ApplicationReviewStatus): void {

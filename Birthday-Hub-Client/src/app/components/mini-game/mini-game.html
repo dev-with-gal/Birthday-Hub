@@ -41,7 +41,7 @@
     <button
       type="button"
       (click)="checkOrder()"
-      [disabled]="orderedMembers().length !== 4 || isLoading()"
+      [disabled]="orderedMembers().length < 4 || isLoading()"
     >
       {{ text.miniGame.checkOrder }}
     </button>

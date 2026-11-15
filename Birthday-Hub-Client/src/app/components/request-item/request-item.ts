@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { he } from '../../i18n/he';
+import { ApplicationReviewStatus, ApplicationStatus } from '../../types/application.types';
+
+export type RequestItemStatus = ApplicationStatus | ApplicationReviewStatus;
 
 export interface RequestItemData {
   id: string;
@@ -9,7 +12,7 @@ export interface RequestItemData {
   lastName: string;
   department: string;
   birthday: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  status: RequestItemStatus;
 }
 
 @Component({

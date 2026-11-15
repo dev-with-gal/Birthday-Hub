@@ -17,8 +17,8 @@
       [requests]="applications()"
       [canReview]="canReview()"
       [updatingId]="updatingId()"
-      (approved)="review($event, 'APPROVED')"
-      (rejected)="review($event, 'REJECTED')"
+      (approved)="review($event, ApplicationReviewStatus.APPROVED)"
+      (rejected)="review($event, ApplicationReviewStatus.REJECTED)"
     ></app-requests>
   }
 </main>

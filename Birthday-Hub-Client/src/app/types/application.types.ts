@@ -1,3 +1,14 @@
+export enum ApplicationStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}
+
+export enum ApplicationReviewStatus {
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}
+
 export interface CreateApplicationRequest {
   firstName: string;
   lastName: string;
@@ -12,7 +23,7 @@ export interface CreatedApplicationResponse {
   lastName: string;
   birthday: string;
   departmentId: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  status: ApplicationStatus;
   createdAt: string;
 }
 
@@ -22,9 +33,7 @@ export interface ApplicationResponse {
   firstName: string;
   lastName: string;
   birthday: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  status: ApplicationStatus;
   createdAt: string;
   department: { name: string };
 }
-
-export type ApplicationReviewStatus = 'APPROVED' | 'REJECTED';
