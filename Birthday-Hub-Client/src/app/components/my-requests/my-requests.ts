@@ -3,7 +3,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { finalize } from 'rxjs';
 import { NewRequest } from '../new-request/new-request';
 import { ApplicationsApiService } from '../../services/applications-api.service';
-import { ApplicationResponse, ApplicationStatus } from '../../types/application.types';
+import { ApplicationResponse } from '../../types/application.types';
 import { he } from '../../i18n/he';
 
 @Component({
@@ -14,7 +14,6 @@ import { he } from '../../i18n/he';
 })
 export class MyRequests implements OnInit {
   readonly text = he;
-  readonly ApplicationStatus = ApplicationStatus;
   private readonly applicationsApi = inject(ApplicationsApiService);
 
   readonly applications = signal<ApplicationResponse[]>([]);

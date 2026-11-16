@@ -24,13 +24,13 @@
           </time>
           <span class="my-requests__status" [attr.data-status]="application.status">
             @switch (application.status) {
-              @case (ApplicationStatus.PENDING) {
+              @case ('PENDING') {
                 {{ text.applications.pending }}
               }
-              @case (ApplicationStatus.APPROVED) {
+              @case ('APPROVED') {
                 {{ text.applications.approved }}
               }
-              @case (ApplicationStatus.REJECTED) {
+              @case ('REJECTED') {
                 {{ text.applications.rejected }}
               }
             }
