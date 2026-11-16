@@ -1,8 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { finalize } from 'rxjs';
-import { SignupService, SignupServiceError, SignupServiceErrorCode } from '../../services/signup.service';
+import { finalize, switchMap } from 'rxjs';
+import { AuthService } from '../../services/auth.service';
+import { UsersApiService } from '../../services/users-api.service';
 import { he } from '../../i18n/he';
 
 @Component({
@@ -14,7 +15,8 @@ import { he } from '../../i18n/he';
 export class Signup {
   readonly text = he;
   private readonly formBuilder = inject(FormBuilder);
-  private readonly signupService = inject(SignupService);
+  private readonly usersApi = inject(UsersApiService);
+  private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
   readonly form = this.formBuilder.nonNullable.group({
@@ -40,27 +42,26 @@ export class Signup {
     }
 
     this.isSubmitting.set(true);
-    this.signupService
-      .signup(email, password)
-      .pipe(finalize(() => this.isSubmitting.set(false)))
+    this.usersApi
+      .create({ email, password })
+      .pipe(
+        switchMap(() => this.auth.login({ email, password })),
+        finalize(() => this.isSubmitting.set(false)),
+      )
       .subscribe({
-        next: () => void this.router.navigateByUrl('/'),
-        error: (error: unknown) => {
-          const errorCode: SignupServiceErrorCode =
-            error instanceof SignupServiceError ? error.code : 'unknown';
-          this.errorMessage.set(this.getErrorMessage(errorCode));
+        next: (session) => {
+          this.auth.startSession(session);
+          void this.router.navigateByUrl('/');
+        },
+        error: (error: { status?: number }) => {
+          this.errorMessage.set(
+            error.status === 409
+              ? this.text.signup.emailExists
+              : error.status === 400
+                ? this.text.signup.invalidForm
+                : this.text.signup.error,
+          );
         },
       });
-  }
-
-  private getErrorMessage(errorCode: SignupServiceErrorCode): string {
-    switch (errorCode) {
-      case 'emailExists':
-        return this.text.signup.emailExists;
-      case 'invalidForm':
-        return this.text.signup.invalidForm;
-      case 'unknown':
-        return this.text.signup.error;
-    }
   }
 }
