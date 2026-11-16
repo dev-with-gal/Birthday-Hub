@@ -1,7 +1,7 @@
 <main class="signup">
   <h1 class="signup__title">{{ text.signup.title }}</h1>
 
-  <form class="signup__form" [formGroup]="form" (ngSubmit)="submit()">
+  <form class="signup__form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
     <div class="signup__field">
       <label class="signup__label" for="email">{{ text.signup.email }}</label>
       <input
@@ -14,6 +14,12 @@
         placeholder="name@gmail.com"
         required
       />
+      <p class="signup__hint" id="email-hint">{{ text.signup.emailHint }}</p>
+      @if (form.controls.email.touched && form.controls.email.hasError('required')) {
+        <p class="signup__field-error" role="alert">{{ text.signup.emailRequired }}</p>
+      } @else if (form.controls.email.touched && form.controls.email.hasError('email')) {
+        <p class="signup__field-error" role="alert">{{ text.signup.invalidEmail }}</p>
+      }
     </div>
 
     <div class="signup__field">
@@ -25,8 +31,19 @@
         type="password"
         formControlName="password"
         autocomplete="new-password"
+        minlength="8"
+        maxlength="128"
         required
       />
+      <p class="signup__hint" id="password-hint">{{ text.signup.passwordHint }}</p>
+      @if (form.controls.password.touched && form.controls.password.hasError('required')) {
+        <p class="signup__field-error" role="alert">{{ text.signup.passwordRequired }}</p>
+      } @else if (
+        form.controls.password.touched &&
+        (form.controls.password.hasError('minlength') || form.controls.password.hasError('maxlength'))
+      ) {
+        <p class="signup__field-error" role="alert">{{ text.signup.invalidPassword }}</p>
+      }
     </div>
 
     <div class="signup__field">
@@ -40,6 +57,14 @@
         autocomplete="new-password"
         required
       />
+      @if (
+        form.controls.confirmPassword.touched &&
+        form.controls.confirmPassword.hasError('required')
+      ) {
+        <p class="signup__field-error" role="alert">
+          {{ text.signup.confirmPasswordRequired }}
+        </p>
+      }
     </div>
 
     @if (errorMessage()) {

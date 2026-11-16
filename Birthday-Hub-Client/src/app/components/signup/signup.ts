@@ -21,7 +21,7 @@ export class Signup {
 
   readonly form = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(8)]],
+    password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(128)]],
     confirmPassword: ['', Validators.required],
   });
   readonly errorMessage = signal('');
@@ -55,7 +55,11 @@ export class Signup {
         },
         error: (error: { status?: number }) => {
           this.errorMessage.set(
-            error.status === 409 ? this.text.signup.emailExists : this.text.signup.error,
+            error.status === 409
+              ? this.text.signup.emailExists
+              : error.status === 400
+                ? this.text.signup.invalidForm
+                : this.text.signup.error,
           );
         },
       });

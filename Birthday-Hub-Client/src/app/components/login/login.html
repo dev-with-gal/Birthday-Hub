@@ -1,7 +1,7 @@
 <main class="login">
   <h1 class="login__title">{{ text.login.title }}</h1>
 
-  <form class="login__form" [formGroup]="form" (ngSubmit)="submit()">
+  <form class="login__form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
     <div class="login__field">
       <label class="login__label" for="email">{{ text.login.email }}</label>
       <input

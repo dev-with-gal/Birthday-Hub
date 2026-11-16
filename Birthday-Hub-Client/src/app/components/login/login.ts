@@ -29,6 +29,7 @@ export class Login {
     this.errorMessage.set('');
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.errorMessage.set(this.text.login.invalidForm);
       return;
     }
 
