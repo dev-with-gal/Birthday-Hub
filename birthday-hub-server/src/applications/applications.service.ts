@@ -7,7 +7,11 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateApplicationDto } from './dto/create-application.dto.js';
-import { ReviewApplicationDto } from './dto/review-application.dto.js';
+import {
+  ReviewApplicationDto,
+  ReviewApplicationStatus,
+} from './dto/review-application.dto.js';
+import { ApplicationStatus } from './application.types.js';
 
 const allowedDepartments = new Set([
   'הנדסה',
@@ -16,17 +20,6 @@ const allowedDepartments = new Set([
   'מכירות',
   'משאבי אנוש',
 ]);
-
-const applicationResponseFields = [
-  'id',
-  'applicationNumber',
-  'firstName',
-  'lastName',
-  'birthday',
-  'departmentId',
-  'status',
-  'createdAt',
-] as const;
 
 @Injectable()
 export class ApplicationsService {
@@ -73,7 +66,7 @@ export class ApplicationsService {
       'status',
       'createdAt',
     )
-      .where({ status: 'APPROVED' })
+      .where({ status: ApplicationStatus.APPROVED })
       .include('department', (department) => department.select('name'))
       .orderBy((application) => application.birthday.asc())
       .all();
@@ -88,7 +81,10 @@ export class ApplicationsService {
     if (reviewerRole !== 'COORDINATOR' && reviewerRole !== 'HR_MANAGER') {
       throw new ForbiddenException('You cannot review applications');
     }
-    if (dto.status !== 'APPROVED' && dto.status !== 'REJECTED') {
+    if (
+      dto.status !== ReviewApplicationStatus.APPROVED &&
+      dto.status !== ReviewApplicationStatus.REJECTED
+    ) {
       throw new BadRequestException('Status must be APPROVED or REJECTED');
     }
 
@@ -96,21 +92,19 @@ export class ApplicationsService {
     const existing = await application
       .select('id', 'status')
       .where({ id })
-      .first();
-    if (!existing) {
-      throw new NotFoundException('Application not found');
-    }
-    if (existing.status !== 'PENDING') {
+      .firstOrThrow();
+    if (existing.status !== ApplicationStatus.PENDING) {
       throw new ConflictException('Application has already been reviewed');
     }
 
     const updated = await application
       .select('id', 'status', 'reviewedAt', 'approvedById')
-      .where({ id, status: 'PENDING' })
+      .where({ id, status: ApplicationStatus.PENDING })
       .update({
         status: dto.status,
         reviewedAt: new Date(),
-        approvedById: dto.status === 'APPROVED' ? reviewerId : null,
+        approvedById:
+          dto.status === ReviewApplicationStatus.APPROVED ? reviewerId : null,
       });
 
     if (!updated) {
@@ -170,7 +164,14 @@ export class ApplicationsService {
     }
 
     return this.prisma.client.orm.public.BirthdayApplication.select(
-      ...applicationResponseFields,
+      'id',
+      'applicationNumber',
+      'firstName',
+      'lastName',
+      'birthday',
+      'departmentId',
+      'status',
+      'createdAt',
     ).create({
       firstName,
       lastName,

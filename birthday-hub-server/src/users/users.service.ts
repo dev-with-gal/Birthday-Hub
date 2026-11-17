@@ -9,14 +9,6 @@ import { CreateUserDto } from './dto/create-user.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 
-const publicUserFields = [
-  'id',
-  'email',
-  'role',
-  'createdAt',
-  'updatedAt',
-] as const;
-
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
@@ -34,17 +26,31 @@ export class UsersService {
 
     const passwordHash = await this.hashPassword(password);
     return this.prisma.client.orm.public.User.select(
-      ...publicUserFields,
+      'id',
+      'email',
+      'role',
+      'createdAt',
+      'updatedAt',
     ).create({ email, passwordHash, role: 'EMPLOYEE' });
   }
 
   findAll() {
-    return this.prisma.client.orm.public.User.select(...publicUserFields).all();
+    return this.prisma.client.orm.public.User.select(
+      'id',
+      'email',
+      'role',
+      'createdAt',
+      'updatedAt',
+    ).all();
   }
 
   async findOne(id: string) {
     const user = await this.prisma.client.orm.public.User.select(
-      ...publicUserFields,
+      'id',
+      'email',
+      'role',
+      'createdAt',
+      'updatedAt',
     )
       .where({ id })
       .first();
@@ -72,7 +78,11 @@ export class UsersService {
     }
 
     const updated = await this.prisma.client.orm.public.User.select(
-      ...publicUserFields,
+      'id',
+      'email',
+      'role',
+      'createdAt',
+      'updatedAt',
     )
       .where({ id })
       .update(updates);
