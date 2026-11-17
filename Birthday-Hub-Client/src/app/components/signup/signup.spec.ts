@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
+import { environment } from '../../../environments/environment';
 import { Signup } from './signup';
 
 describe('Signup', () => {
@@ -43,6 +44,6 @@ describe('Signup', () => {
     expect(element.querySelectorAll('.signup__field-error')[1].textContent).toContain(
       component.text.signup.invalidPassword,
     );
-    httpTestingController.expectNone('http://localhost:3000/users');
+    httpTestingController.expectNone(`${environment.apiUrl}/users`);
   });
 });

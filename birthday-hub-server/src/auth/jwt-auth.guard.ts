@@ -5,15 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-
-interface AuthenticatedRequest {
-  headers: { authorization?: string };
-  user?: { sub: string; email: string; role: string };
-}
-
-export interface AuthenticatedHttpRequest extends Request {
-  user: { sub: string; email: string; role: string };
-}
+import type { AuthenticatedRequest } from './auth.types.js';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {

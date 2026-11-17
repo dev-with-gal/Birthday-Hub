@@ -2,18 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-
-export interface AuthUser {
-  id: string;
-  email: string;
-  role: string;
-}
-
-export interface LoginResponse {
-  accessToken: string;
-  expiresIn: number;
-  user: AuthUser;
-}
+import { AuthUser, LoginRequest, LoginResponse } from '../types/auth.types';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -29,7 +18,7 @@ export class AuthService {
     return this.isLoggedIn() ? sessionStorage.getItem(this.tokenKey) : null;
   }
 
-  login(credentials: { email: string; password: string }): Observable<LoginResponse> {
+  login(credentials: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>('http://localhost:3000/auth/login', credentials);
   }
 

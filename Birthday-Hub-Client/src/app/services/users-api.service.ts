@@ -1,24 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-
-export interface CreateUserRequest {
-  email: string;
-  password: string;
-}
-
-export interface CreatedUserResponse {
-  id: string;
-  email: string;
-  role: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { environment } from '../../environments/environment';
+import { CreateUserRequest, CreatedUserResponse } from '../types/user.types';
 
 @Injectable({ providedIn: 'root' })
 export class UsersApiService {
   private readonly http = inject(HttpClient);
-  private readonly usersUrl = 'http://localhost:3000/users';
+  private readonly usersUrl = `${environment.apiUrl}/users`;
 
   create(request: CreateUserRequest): Observable<CreatedUserResponse> {
     return this.http.post<CreatedUserResponse>(this.usersUrl, request);

@@ -9,7 +9,7 @@ import { ACCESS_TOKEN_TTL_SECONDS } from './auth.constants.js';
 
 const jwtSecret = process.env['AUTH_JWT_SECRET'];
 if (!jwtSecret || jwtSecret.length < 32) {
-  throw new Error('AUTH_JWT_SECRET must be set to at least 32 characters');
+  throw new Error('AUTH_JWT_SECRET invalid');
 }
 
 @Module({

@@ -16,24 +16,20 @@ export interface CreateApplicationRequest {
   department: string;
 }
 
-export interface CreatedApplicationResponse {
+interface ApplicationResponseBase {
   id: string;
   applicationNumber: number;
   firstName: string;
   lastName: string;
   birthday: string;
-  departmentId: string;
   status: ApplicationStatus;
   createdAt: string;
 }
 
-export interface ApplicationResponse {
-  id: string;
-  applicationNumber: number;
-  firstName: string;
-  lastName: string;
-  birthday: string;
-  status: ApplicationStatus;
-  createdAt: string;
+export interface CreatedApplicationResponse extends ApplicationResponseBase {
+  departmentId: string;
+}
+
+export interface ApplicationResponse extends ApplicationResponseBase {
   department: { name: string };
 }
