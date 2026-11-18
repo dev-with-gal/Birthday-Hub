@@ -11,14 +11,7 @@ import {
   ReviewApplicationStatus,
 } from './dto/review-application.dto.js';
 import { ApplicationStatus } from './application.types.js';
-
-const allowedDepartments = new Set([
-  'הנדסה',
-  'שיווק',
-  'עיצוב',
-  'מכירות',
-  'משאבי אנוש',
-]);
+import { ALLOWED_DEPARTMENTS } from './applications.constants.js';
 
 @Injectable()
 export class ApplicationsService {
@@ -81,7 +74,7 @@ export class ApplicationsService {
     const departmentName =
       typeof dto.department === 'string' ? dto.department.trim() : '';
 
-    if (!allowedDepartments.has(departmentName)) {
+    if (!ALLOWED_DEPARTMENTS.has(departmentName)) {
       throw new BadRequestException('Choose a valid department');
     }
 
