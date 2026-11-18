@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { db } from '../prisma/prisma.service.js';
 import { ApplicationStatus } from './application.types.js';
 import type {
   CreateApplicationData,
@@ -8,10 +8,8 @@ import type {
 
 @Injectable()
 export class ApplicationsUtils {
-  constructor(private readonly prisma: PrismaService) {}
-
   findAll() {
-    return this.prisma.client.BirthdayApplication.select(
+    return db.BirthdayApplication.select(
       'id',
       'applicationNumber',
       'firstName',
@@ -26,7 +24,7 @@ export class ApplicationsUtils {
   }
 
   findMine(submittedById: string) {
-    return this.prisma.client.BirthdayApplication.select(
+    return db.BirthdayApplication.select(
       'id',
       'applicationNumber',
       'firstName',
@@ -42,7 +40,7 @@ export class ApplicationsUtils {
   }
 
   findApproved() {
-    return this.prisma.client.BirthdayApplication.select(
+    return db.BirthdayApplication.select(
       'id',
       'applicationNumber',
       'firstName',
@@ -58,7 +56,7 @@ export class ApplicationsUtils {
   }
 
   findReviewState(id: string) {
-    return this.prisma.client.BirthdayApplication.select('id', 'status')
+    return db.BirthdayApplication.select('id', 'status')
       .where({ id })
       .firstOrThrow();
   }
@@ -68,7 +66,7 @@ export class ApplicationsUtils {
     expectedStatus: ApplicationStatus,
     data: ReviewApplicationData,
   ) {
-    return this.prisma.client.BirthdayApplication.select(
+    return db.BirthdayApplication.select(
       'id',
       'status',
       'reviewedAt',
@@ -79,17 +77,15 @@ export class ApplicationsUtils {
   }
 
   findDepartmentByName(name: string) {
-    return this.prisma.client.Department.select('id')
-      .where({ name })
-      .first();
+    return db.Department.select('id').where({ name }).first();
   }
 
   createDepartment(name: string) {
-    return this.prisma.client.Department.select('id').create({ name });
+    return db.Department.select('id').create({ name });
   }
 
   create(data: CreateApplicationData) {
-    return this.prisma.client.BirthdayApplication.select(
+    return db.BirthdayApplication.select(
       'id',
       'applicationNumber',
       'firstName',

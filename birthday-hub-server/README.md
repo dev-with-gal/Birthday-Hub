@@ -37,7 +37,8 @@ The same separation applies to `UsersService` / `UsersUtils` and `AuthService` /
 `AuthUtils`, using their module's `users-utils.ts` and `auth-utils.ts` files.
 User validation, password hashing/verification, and token issuance stay in the
 services. Utils select and persist data without making business decisions.
-All utils are singleton Nest providers using the shared `PrismaService`.
+All utils use the exported `db` client. `PrismaModule` registers
+its owning service instance with Nest to manage the database connection lifecycle.
 
 ## Project setup
 

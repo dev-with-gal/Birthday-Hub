@@ -1,17 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { db } from '../prisma/prisma.service.js';
 import type { CreateUserData, UpdateUserData } from './user.types.js';
 
 @Injectable()
 export class UsersUtils {
-  constructor(private readonly prisma: PrismaService) {}
-
   findByEmail(email: string) {
-    return this.prisma.client.User.select('id').where({ email }).first();
+    return db.User.select('id').where({ email }).first();
   }
 
   create(data: CreateUserData) {
-    return this.prisma.client.User.select(
+    return db.User.select(
       'id',
       'email',
       'role',
@@ -21,40 +19,22 @@ export class UsersUtils {
   }
 
   findAll() {
-    return this.prisma.client.User.select(
-      'id',
-      'email',
-      'role',
-      'createdAt',
-      'updatedAt',
-    ).all();
+    return db.User.select('id', 'email', 'role', 'createdAt', 'updatedAt').all();
   }
 
   findOne(id: string) {
-    return this.prisma.client.User.select(
-      'id',
-      'email',
-      'role',
-      'createdAt',
-      'updatedAt',
-    )
+    return db.User.select('id', 'email', 'role', 'createdAt', 'updatedAt')
       .where({ id })
       .first();
   }
 
   update(id: string, data: UpdateUserData) {
-    return this.prisma.client.User.select(
-      'id',
-      'email',
-      'role',
-      'createdAt',
-      'updatedAt',
-    )
+    return db.User.select('id', 'email', 'role', 'createdAt', 'updatedAt')
       .where({ id })
       .update(data);
   }
 
   remove(id: string) {
-    return this.prisma.client.User.where({ id }).delete();
+    return db.User.where({ id }).delete();
   }
 }

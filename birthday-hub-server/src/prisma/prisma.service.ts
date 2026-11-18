@@ -1,15 +1,18 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { db } from './db.js';
+import { db as dbJs } from './db.js';
 
 @Injectable()
 export class PrismaService implements OnModuleInit, OnModuleDestroy {
-  readonly client = db.orm.public;
+  readonly client = dbJs.orm.public;
 
   async onModuleInit(): Promise<void> {
-    await db.connect();
+    await dbJs.connect();
   }
 
   async onModuleDestroy(): Promise<void> {
-    await db.close();
+    await dbJs.close();
   }
 }
+
+const prismaServiceInstance = new PrismaService();
+export const db = prismaServiceInstance.client;
