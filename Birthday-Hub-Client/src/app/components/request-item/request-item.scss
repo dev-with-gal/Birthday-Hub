@@ -6,7 +6,6 @@
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   background: #fff;
-  direction: rtl;
 }
 
 .request-image {
@@ -47,7 +46,7 @@
   background: #dc2626;
 }
 
-@media (max-width: 520px) {
+@media (max-width: 32.5rem) {
   .request-card {
     flex-wrap: wrap;
   }

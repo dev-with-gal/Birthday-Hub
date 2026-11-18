@@ -1,2 +1,24 @@
-<app-requests [requests]="applications"></app-requests>
-<app-new-request></app-new-request>
+<main class="all-requests">
+  <header class="all-requests__header">
+    <h1>{{ text.applications.allTitle }}</h1>
+    <app-new-request (applicationCreated)="loadApplications()"></app-new-request>
+  </header>
+
+  @if (errorMessage()) {
+    <p role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (isLoading()) {
+    <p role="status">{{ text.applications.loading }}</p>
+  } @else if (applications().length === 0) {
+    <p>{{ text.applications.empty }}</p>
+  } @else {
+    <app-requests
+      [requests]="applications()"
+      [canReview]="canReview()"
+      [updatingId]="updatingId()"
+      (approved)="review($event, ApplicationReviewStatus.APPROVED)"
+      (rejected)="review($event, ApplicationReviewStatus.REJECTED)"
+    ></app-requests>
+  }
+</main>

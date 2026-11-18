@@ -1,17 +1,25 @@
 <div class="home-container">
-  <h1>ימי הולדת בחברה</h1>
-  <p>חגגו עם העמיתים שלכם!</p>
+  <h1>{{ text.home.title }}</h1>
+  <p>{{ text.home.subtitle }}</p>
 
-  @for (department of groupedEmployees() | keyvalue; track department.key) {
-    <section class="department-section">
-      <h2>{{ department.key }}</h2>
+  @if (isLoading()) {
+    <p role="status">{{ text.home.loading }}</p>
+  } @else if (errorMessage()) {
+    <p role="alert">{{ errorMessage() }}</p>
+  } @else if (employees().length === 0) {
+    <p>{{ text.home.empty }}</p>
+  } @else {
+    @for (department of groupedEmployees() | keyvalue; track department.key) {
+      <section class="department-section">
+        <h2>{{ department.key }}</h2>
 
-      <div class="birthday-grid">
-        @for (employee of department.value; track employee.id) {
-          <app-birthday-card [employee]="employee" />
-        }
-      </div>
-    </section>
+        <div class="birthday-grid">
+          @for (employee of department.value; track employee.id) {
+            <app-birthday-card [employee]="employee" />
+          }
+        </div>
+      </section>
+    }
   }
 
   <app-new-request></app-new-request>

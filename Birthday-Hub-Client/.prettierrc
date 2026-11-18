@@ -5,6 +5,7 @@
     {
       "files": "*.html",
       "options": {
+        "semi": false,
         "parser": "angular"
       }
     }

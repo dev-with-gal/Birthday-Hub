@@ -1,10 +1,10 @@
-<header class="header" dir="rtl">
+<header class="header">
   <div class="header-brand-greeting">
     <h1 class="header-title app-title">
       <svg
         class="header-logo"
         role="img"
-        aria-label="עוגת יום הולדת"
+        [attr.aria-label]="text.header.logoAlt"
         viewBox="0 0 48 48"
         width="40"
         height="40"
@@ -38,32 +38,45 @@
           stroke-linecap="round"
         />
       </svg>
-      מרכז ימי ההולדת<br />
+      {{ text.header.title }}<br />
     </h1>
-    <p class="header-greeting">שלום, משתמש</p>
+    <p class="header-greeting">
+      {{ text.header.greeting }} {{ auth.currentUser()?.email ?? text.header.guest }}
+    </p>
   </div>
 
-  <nav class="header-links" aria-label="ניווט ראשי">
-    <a class="header-link" href="/">בית</a>
-    <a class="header-link" href="/my-requests">הבקשות שלי</a>
-    <a class="header-link" href="/all-requests">בקשות</a>
-    <a class="header-link" href="/mini-game">משחק</a>
-    <a class="header-link" href="/login" aria-label="התנתקות" title="התנתקות">
-      <svg
-        aria-hidden="true"
-        viewBox="0 0 24 24"
-        width="20"
-        height="20"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+  <nav class="header-links" [attr.aria-label]="text.header.navigation">
+    <a class="header-link" href="/">{{ text.header.home }}</a>
+    @if (auth.authenticated()) {
+      <a class="header-link" href="/my-requests">{{ text.header.myRequests }}</a>
+      <a class="header-link" href="/all-requests">{{ text.header.allRequests }}</a>
+      <a class="header-link" href="/mini-game">{{ text.header.miniGame }}</a>
+      <a
+        class="header-link"
+        href="/login"
+        [attr.aria-label]="text.header.logout"
+        [title]="text.header.logout"
+        (click)="logout($event)"
       >
-        <path d="M10 17l5-5-5-5" />
-        <path d="M15 12H3" />
-        <path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6" />
-      </svg>
-    </a>
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 24 24"
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M10 17l5-5-5-5" />
+          <path d="M15 12H3" />
+          <path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6" />
+        </svg>
+      </a>
+    } @else {
+      <a class="header-link" href="/login">{{ text.header.login }}</a>
+      <a class="header-link" href="/signup">{{ text.header.signup }}</a>
+    }
   </nav>
 </header>

@@ -1,33 +1,62 @@
 <section class="game">
-  <h2>מי הכי מבוגר?</h2>
-  <p>סדרו את החברים מהמבוגר ביותר לצעיר ביותר.</p>
+  <h2>{{ text.miniGame.title }}</h2>
+  <p>{{ text.miniGame.instructions }}</p>
 
-  <ol class="members">
-    <li *ngFor="let member of orderedMembers; let i = index">
-      <span>{{ member.name }}</span>
-      <span class="controls">
-        <button type="button" (click)="move(i, -1)" [disabled]="i === 0" aria-label="העבר למעלה">
-          ↑
-        </button>
-        <button
-          type="button"
-          (click)="move(i, 1)"
-          [disabled]="i === orderedMembers.length - 1"
-          aria-label="העבר למטה"
-        >
-          ↓
-        </button>
-      </span>
-    </li>
-  </ol>
+  @if (isLoading()) {
+    <p role="status">{{ text.miniGame.loading }}</p>
+  }
 
-  <div class="actions">
-    <button type="button" (click)="checkOrder()" [disabled]="orderedMembers.length !== 4">
-      בדיקת הסדר
-    </button>
-    <button type="button" class="secondary" (click)="newRound()">סיבוב חדש</button>
+  <div class="members" role="list">
+    @for (member of orderedMembers(); track member.id; let i = $index) {
+      <article class="member-card" role="listitem">
+        <span class="member-position">{{ i + 1 }}</span>
+        <span>{{ member.name }}</span>
+      </article>
+      @if (i < orderedMembers().length - 1) {
+        <div class="swap-control">
+          <button
+            type="button"
+            class="swap-button"
+            [disabled]="isLoading()"
+            [attr.aria-label]="
+              text.miniGame.swap +
+              ': ' +
+              member.name +
+              ' ' +
+              text.miniGame.between +
+              ' ' +
+              orderedMembers()[i + 1].name
+            "
+            [title]="text.miniGame.swap"
+            (click)="swapAdjacent(i)"
+          >
+            ⇅
+          </button>
+        </div>
+      }
+    }
   </div>
 
-  <p class="message" aria-live="polite">{{ message }}</p>
-  <p *ngIf="correctCount !== null" aria-live="polite">{{ correctCount }} מתוך 4 במיקום הנכון</p>
+  <div class="actions">
+    <button
+      type="button"
+      (click)="checkOrder()"
+      [disabled]="orderedMembers().length < 4 || isLoading()"
+    >
+      {{ text.miniGame.checkOrder }}
+    </button>
+    <button
+      type="button"
+      class="secondary"
+      (click)="newRound()"
+      [disabled]="isLoading() || allMembers().length < 4"
+    >
+      {{ text.miniGame.newRound }}
+    </button>
+  </div>
+
+  <p class="message" aria-live="polite">{{ message() }}</p>
+  <p *ngIf="correctCount() !== null" aria-live="polite">
+    {{ correctCount() }} {{ text.miniGame.correctPositionCount }}
+  </p>
 </section>

@@ -1,9 +1,10 @@
 <div class="birthday-card">
-  <img [src]="employee.avatar" [alt]="employee.name" />
+  @if (employee.avatar) {
+    <img [src]="employee.avatar" [alt]="employee.name" />
+  }
 
   <div class="employee-info">
     <h3>{{ employee.name }}</h3>
-    <p>{{ employee.department }}</p>
-    <span>{{ employee.birthday }}</span>
+    <span>{{ employee.birthday | date: 'dd/MM/yyyy' }}</span>
   </div>
 </div>

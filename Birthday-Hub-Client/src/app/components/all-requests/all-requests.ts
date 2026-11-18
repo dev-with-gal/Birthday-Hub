@@ -1,14 +1,12 @@
-import { Component, Input } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { finalize } from 'rxjs';
+import { AuthService } from '../../services/auth.service';
+import { ApplicationsApiService } from '../../services/applications-api.service';
+import { ApplicationResponse, ApplicationReviewStatus } from '../../types/application.types';
 import { RequestItemData } from '../request-item/request-item';
 import { Requests } from '../requests/requests';
 import { NewRequest } from '../new-request/new-request';
-
-const MOCK_APPLICATIONS: RequestItemData[] = [
-  { name: 'דנה ראשוני', birthdate: '1988-04-12', department: 'הנדסה', image: null },
-  { name: 'נועם שלישון', birthdate: '1995-09-23', department: 'שיווק', image: null },
-  { name: 'מיה שני', birthdate: '1991-01-05', department: 'עיצוב', image: null },
-  { name: 'אורי רביעי', birthdate: '2000-07-18', department: 'מכירות', image: null },
-];
+import { he } from '../../i18n/he';
 
 @Component({
   selector: 'app-all-requests',
@@ -17,6 +15,65 @@ const MOCK_APPLICATIONS: RequestItemData[] = [
   templateUrl: './all-requests.html',
   styleUrl: './all-requests.scss',
 })
-export class AllRequests {
-  @Input() applications: RequestItemData[] = [...MOCK_APPLICATIONS];
+export class AllRequests implements OnInit {
+  readonly text = he;
+  readonly ApplicationReviewStatus = ApplicationReviewStatus;
+  private readonly applicationsApi = inject(ApplicationsApiService);
+  private readonly auth = inject(AuthService);
+
+  readonly applications = signal<RequestItemData[]>([]);
+  readonly isLoading = signal(true);
+  readonly errorMessage = signal('');
+  readonly updatingId = signal<string | null>(null);
+  readonly canReview = computed(() => {
+    const role = this.auth.currentUser()?.role;
+    return role === 'COORDINATOR' || role === 'HR_MANAGER';
+  });
+
+  ngOnInit(): void {
+    this.loadApplications();
+  }
+
+  loadApplications(): void {
+    this.errorMessage.set('');
+    this.isLoading.set(true);
+    this.applicationsApi
+      .findAll()
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe({
+        next: (applications) => this.applications.set(applications.map(this.toRequestItem)),
+        error: () => this.errorMessage.set(this.text.applications.loadError),
+      });
+  }
+
+  private toRequestItem(application: ApplicationResponse): RequestItemData {
+    return {
+      id: application.id,
+      applicationNumber: application.applicationNumber,
+      firstName: application.firstName,
+      lastName: application.lastName,
+      department: application.department.name,
+      birthday: application.birthday,
+      status: application.status,
+    };
+  }
+
+  review(id: string, status: ApplicationReviewStatus): void {
+    if (!this.canReview() || this.updatingId()) return;
+
+    this.errorMessage.set('');
+    this.updatingId.set(id);
+    this.applicationsApi
+      .review(id, status)
+      .pipe(finalize(() => this.updatingId.set(null)))
+      .subscribe({
+        next: () =>
+          this.applications.update((applications) =>
+            applications.map((application) =>
+              application.id === id ? { ...application, status } : application,
+            ),
+          ),
+        error: () => this.errorMessage.set(this.text.applications.updateError),
+      });
+  }
 }

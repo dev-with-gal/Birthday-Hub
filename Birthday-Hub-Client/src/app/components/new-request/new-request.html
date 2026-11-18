@@ -1,8 +1,19 @@
-<button class="floating-add" type="button" aria-label="יצירת בקשה חדשה" (click)="openModal()">
+<button
+  class="floating-add"
+  type="button"
+  [attr.aria-label]="text.requestForm.createTitle"
+  [disabled]="!auth.authenticated()"
+  [title]="auth.authenticated() ? text.requestForm.createTitle : text.requestForm.loginRequired"
+  (click)="openModal()"
+>
   +
 </button>
 
-<div *ngIf="isOpen" class="modal-backdrop" (click)="closeModal()">
+<p *ngIf="successMessage()" class="request-status" role="status">
+  {{ successMessage() }}
+</p>
+
+<div *ngIf="isOpen()" class="modal-backdrop" (click)="closeModal()">
   <section
     class="request-modal"
     role="dialog"
@@ -10,42 +21,48 @@
     aria-labelledby="request-title"
     (click)="$event.stopPropagation()"
   >
-    <button class="close-button" type="button" aria-label="סגירה" (click)="closeModal()">×</button>
+    <button
+      class="close-button"
+      type="button"
+      [attr.aria-label]="text.requestForm.close"
+      (click)="closeModal()"
+    >
+      ×
+    </button>
 
-    <h2 id="request-title">בקשה חדשה</h2>
+    <h2 id="request-title">{{ text.requestForm.title }}</h2>
 
     <form (ngSubmit)="submitRequest()">
-      <label for="request-name">שם</label>
-      <input id="request-name" name="name" type="text" [(ngModel)]="name" required />
+      <label for="request-first-name">{{ text.requestForm.firstName }}</label>
+      <input
+        id="request-first-name"
+        name="firstName"
+        type="text"
+        [(ngModel)]="firstName"
+        required
+      />
 
-      <label for="department">מחלקה</label>
-      <select id="department" name="department" required>
-        <option value="" disabled selected>בחרו מחלקה</option>
+      <label for="request-last-name">{{ text.requestForm.lastName }}</label>
+      <input id="request-last-name" name="lastName" type="text" [(ngModel)]="lastName" required />
+
+      <label for="department">{{ text.requestForm.department }}</label>
+      <select id="department" name="department" [(ngModel)]="department" required>
+        <option value="" disabled>{{ text.requestForm.chooseDepartment }}</option>
         <option *ngFor="let department of departments" [value]="department">
           {{ department }}
         </option>
       </select>
 
-      <label for="request-birthdate">תאריך לידה</label>
+      <label for="request-birthdate">{{ text.requestForm.birthday }}</label>
       <input id="request-birthdate" name="birthdate" type="date" [(ngModel)]="birthdate" required />
 
-      <label for="request-image">תמונה</label>
-      <input
-        id="request-image"
-        name="image"
-        type="file"
-        accept="image/*"
-        (change)="onImageSelected($event)"
-      />
+      <p *ngIf="errorMessage()" class="request-error" role="alert">
+        {{ errorMessage() }}
+      </p>
 
-      <img
-        *ngIf="imagePreview"
-        class="image-preview"
-        [src]="imagePreview"
-        alt="תצוגה מקדימה של התמונה שנבחרה"
-      />
-
-      <button class="submit-button" type="submit">יצירת בקשה</button>
+      <button class="submit-button" type="submit" [disabled]="isSubmitting()">
+        {{ isSubmitting() ? text.requestForm.submitting : text.requestForm.submit }}
+      </button>
     </form>
   </section>
 </div>

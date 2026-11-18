@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "Birthday-Hub-Client": {
+    "birthday-hub-client": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -61,10 +61,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "Birthday-Hub-Client:build:production"
+              "buildTarget": "birthday-hub-client:build:production"
             },
             "development": {
-              "buildTarget": "Birthday-Hub-Client:build:development"
+              "buildTarget": "birthday-hub-client:build:development"
             }
           },
           "defaultConfiguration": "development"

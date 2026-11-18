@@ -1,36 +1,42 @@
-<main class="login" dir="rtl" lang="he">
-  <h1 class="login__title">התחברות</h1>
+<main class="login">
+  <h1 class="login__title">{{ text.login.title }}</h1>
 
-  <form class="login__form" method="post">
+  <form class="login__form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
     <div class="login__field">
-      <label class="login__label" for="email">כתובת אימייל</label>
+      <label class="login__label" for="email">{{ text.login.email }}</label>
       <input
         class="login__input"
         id="email"
         name="email"
         type="email"
+        formControlName="email"
         autocomplete="email"
         required
       />
     </div>
 
     <div class="login__field">
-      <label class="login__label" for="password">סיסמה</label>
+      <label class="login__label" for="password">{{ text.login.password }}</label>
       <input
         class="login__input"
         id="password"
         name="password"
         type="password"
+        formControlName="password"
         autocomplete="current-password"
         required
       />
     </div>
 
-    <button class="login__submit" type="submit">התחברות</button>
+    @if (errorMessage()) {
+      <p class="login__message" role="alert">{{ errorMessage() }}</p>
+    }
+
+    <button class="login__submit" type="submit" [disabled]="isSubmitting()">
+      {{ isSubmitting() ? text.login.submitting : text.login.submit }}
+    </button>
   </form>
 
-  <p class="login__signup-prompt">אין לך חשבון?</p>
-  <button class="login__signup-button" type="button" onclick="window.location.href = '/signup'">
-    הרשמה
-  </button>
+  <p class="login__signup-prompt">{{ text.login.signupPrompt }}</p>
+  <a class="login__signup-button" href="/signup">{{ text.login.signup }}</a>
 </main>

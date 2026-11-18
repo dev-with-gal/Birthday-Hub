@@ -2,5 +2,9 @@
   <app-request-item
     *ngFor="let request of requests"
     [request]="request"
+    [canReview]="canReview"
+    [isUpdating]="updatingId === request.id"
+    (approved)="approved.emit($event)"
+    (rejected)="rejected.emit($event)"
   ></app-request-item>
 </div>

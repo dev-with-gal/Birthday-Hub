@@ -1,2 +1,42 @@
-<p>הבקשות שלי עובד לגמרי אח יקר!</p>
-<app-new-request></app-new-request>
+<main class="my-requests">
+  <header class="my-requests__header">
+    <h1>{{ text.applications.myTitle }}</h1>
+    <app-new-request (applicationCreated)="loadApplications()"></app-new-request>
+  </header>
+
+  @if (isLoading()) {
+    <p role="status">{{ text.applications.loading }}</p>
+  } @else if (errorMessage()) {
+    <p role="alert">{{ errorMessage() }}</p>
+    <button type="button" (click)="loadApplications()">{{ text.applications.retry }}</button>
+  } @else if (applications().length === 0) {
+    <p>{{ text.applications.empty }}</p>
+  } @else {
+    <div class="my-requests__list">
+      @for (application of applications(); track application.id) {
+        <article class="my-requests__item">
+          <div>
+            <h2>{{ application.firstName }} {{ application.lastName }}</h2>
+            <p>{{ application.department.name }}</p>
+          </div>
+          <time [attr.datetime]="application.birthday">
+            {{ application.birthday | date: 'longDate' }}
+          </time>
+          <span class="my-requests__status" [attr.data-status]="application.status">
+            @switch (application.status) {
+              @case ('PENDING') {
+                {{ text.applications.pending }}
+              }
+              @case ('APPROVED') {
+                {{ text.applications.approved }}
+              }
+              @case ('REJECTED') {
+                {{ text.applications.rejected }}
+              }
+            }
+          </span>
+        </article>
+      }
+    </div>
+  }
+</main>

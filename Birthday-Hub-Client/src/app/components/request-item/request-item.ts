@@ -1,11 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { he } from '../../i18n/he';
+import { ApplicationReviewStatus, ApplicationStatus } from '../../types/application.types';
+
+export type RequestItemStatus = ApplicationStatus | ApplicationReviewStatus;
 
 export interface RequestItemData {
-  name: string;
+  id: string;
+  applicationNumber: number;
+  firstName: string;
+  lastName: string;
   department: string;
-  birthdate: string;
-  image: File | string | null;
+  birthday: string;
+  status: RequestItemStatus;
 }
 
 @Component({
@@ -15,34 +22,11 @@ export interface RequestItemData {
   templateUrl: './request-item.html',
   styleUrls: ['./request-item.scss'],
 })
-export class RequestItem implements OnChanges, OnDestroy {
+export class RequestItem {
+  readonly text = he;
   @Input() request!: RequestItemData;
-  @Output() approved = new EventEmitter<RequestItemData>();
-  @Output() rejected = new EventEmitter<RequestItemData>();
-
-  imageSrc: string | null = null;
-  private objectUrl: string | null = null;
-
-  ngOnChanges(): void {
-    this.releaseObjectUrl();
-    this.imageSrc = null;
-
-    if (typeof this.request?.image === 'string') {
-      this.imageSrc = this.request.image;
-    } else if (typeof File !== 'undefined' && this.request?.image instanceof File) {
-      this.objectUrl = URL.createObjectURL(this.request.image);
-      this.imageSrc = this.objectUrl;
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.releaseObjectUrl();
-  }
-
-  private releaseObjectUrl(): void {
-    if (this.objectUrl) {
-      URL.revokeObjectURL(this.objectUrl);
-      this.objectUrl = null;
-    }
-  }
+  @Input() canReview = false;
+  @Input() isUpdating = false;
+  @Output() approved = new EventEmitter<string>();
+  @Output() rejected = new EventEmitter<string>();
 }

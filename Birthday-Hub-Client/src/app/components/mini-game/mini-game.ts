@@ -1,17 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { finalize } from 'rxjs';
+import { ApplicationsApiService } from '../../services/applications-api.service';
+import { he } from '../../i18n/he';
 
 export interface MiniGameMember {
+  id: string;
   name: string;
   birthdate: string;
 }
-
-const MOCK_MEMBERS: MiniGameMember[] = [
-  { name: 'דנה ראשוני', birthdate: '1988-04-12' },
-  { name: 'נועם שלישון', birthdate: '1995-09-23' },
-  { name: 'מיה שני', birthdate: '1991-01-05' },
-  { name: 'אורי רביעי', birthdate: '2000-07-18' },
-];
 
 @Component({
   selector: 'app-mini-game',
@@ -20,55 +17,71 @@ const MOCK_MEMBERS: MiniGameMember[] = [
   templateUrl: './mini-game.html',
   styleUrl: './mini-game.scss',
 })
-export class MiniGame {
-  private allMembers: MiniGameMember[] = [...MOCK_MEMBERS];
+export class MiniGame implements OnInit {
+  readonly text = he;
+  private readonly applicationsApi = inject(ApplicationsApiService);
 
-  orderedMembers: MiniGameMember[] = [];
-  message = '';
-  correctCount: number | null = null;
+  readonly allMembers = signal<MiniGameMember[]>([]);
+  readonly orderedMembers = signal<MiniGameMember[]>([]);
+  readonly message = signal('');
+  readonly correctCount = signal<number | null>(null);
+  readonly isLoading = signal(true);
 
-  @Input() set members(value: MiniGameMember[] | null | undefined) {
-    this.allMembers = value?.length ? value : [...MOCK_MEMBERS];
-    this.newRound();
+  ngOnInit(): void {
+    this.applicationsApi
+      .findApproved()
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe({
+        next: (applications) => {
+          this.allMembers.set(
+            applications.map((application) => ({
+              id: application.id,
+              name: `${application.firstName} ${application.lastName}`,
+              birthdate: application.birthday.slice(0, 10),
+            })),
+          );
+          this.newRound();
+        },
+        error: () => this.message.set(this.text.miniGame.loadError),
+      });
   }
 
   newRound(): void {
-    this.message = '';
-    this.correctCount = null;
+    this.message.set('');
+    this.correctCount.set(null);
 
-    if (this.allMembers.length < 4) {
-      this.orderedMembers = [];
-      this.message = 'צריך לפחות 4 חברים כדי להתחיל.';
+    if (this.allMembers().length < 4) {
+      this.orderedMembers.set([]);
+      this.message.set(this.text.miniGame.notEnoughMembers);
       return;
     }
 
-    const shuffled = this.shuffle([...this.allMembers]);
-    this.orderedMembers = this.shuffle(shuffled.slice(0, 4));
+    const shuffled = this.shuffle([...this.allMembers()]);
+    this.orderedMembers.set(this.shuffle(shuffled.slice(0, 4)));
   }
 
-  move(index: number, direction: -1 | 1): void {
-    const target = index + direction;
-    if (target < 0 || target >= this.orderedMembers.length) return;
+  swapAdjacent(index: number): void {
+    const orderedMembers = this.orderedMembers();
+    if (index < 0 || index >= orderedMembers.length - 1) return;
 
-    [this.orderedMembers[index], this.orderedMembers[target]] = [
-      this.orderedMembers[target],
-      this.orderedMembers[index],
-    ];
-    this.message = '';
-    this.correctCount = null;
+    const movedMembers = [...orderedMembers];
+    [movedMembers[index], movedMembers[index + 1]] = [movedMembers[index + 1], movedMembers[index]];
+    this.orderedMembers.set(movedMembers);
+    this.message.set('');
+    this.correctCount.set(null);
   }
 
   checkOrder(): void {
-    const correctOrder = [...this.orderedMembers].sort((a, b) =>
-      a.birthdate.localeCompare(b.birthdate),
-    );
+    const orderedMembers = this.orderedMembers();
+    const correctOrder = [...orderedMembers].sort((a, b) => a.birthdate.localeCompare(b.birthdate));
 
-    this.correctCount = this.orderedMembers.reduce(
+    const correctCount = orderedMembers.reduce(
       (count, member, index) => count + (member === correctOrder[index] ? 1 : 0),
       0,
     );
 
-    this.message = this.correctCount === 4 ? 'כל הכבוד! הסדר נכון.' : 'נסו שוב!';
+    this.correctCount.set(correctCount);
+    this.message.set(correctCount === 4 ? this.text.miniGame.correct : this.text.miniGame.tryAgain);
   }
 
   private shuffle<T>(items: T[]): T[] {
