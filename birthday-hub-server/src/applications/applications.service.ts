@@ -3,9 +3,8 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { ApplicationsUtils } from './applications-utils.js';
 import { CreateApplicationDto } from './dto/create-application.dto.js';
 import {
   ReviewApplicationDto,
@@ -23,53 +22,18 @@ const allowedDepartments = new Set([
 
 @Injectable()
 export class ApplicationsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly applicationsUtils: ApplicationsUtils) {}
 
   findAll() {
-    return this.prisma.client.orm.public.BirthdayApplication.select(
-      'id',
-      'applicationNumber',
-      'firstName',
-      'lastName',
-      'birthday',
-      'status',
-      'createdAt',
-    )
-      .include('department', (department) => department.select('name'))
-      .orderBy((application) => application.createdAt.desc())
-      .all();
+    return this.applicationsUtils.findAll();
   }
 
   findMine(submittedById: string) {
-    return this.prisma.client.orm.public.BirthdayApplication.select(
-      'id',
-      'applicationNumber',
-      'firstName',
-      'lastName',
-      'birthday',
-      'status',
-      'createdAt',
-    )
-      .where({ submittedById })
-      .include('department', (department) => department.select('name'))
-      .orderBy((application) => application.createdAt.desc())
-      .all();
+    return this.applicationsUtils.findMine(submittedById);
   }
 
   findApproved() {
-    return this.prisma.client.orm.public.BirthdayApplication.select(
-      'id',
-      'applicationNumber',
-      'firstName',
-      'lastName',
-      'birthday',
-      'status',
-      'createdAt',
-    )
-      .where({ status: ApplicationStatus.APPROVED })
-      .include('department', (department) => department.select('name'))
-      .orderBy((application) => application.birthday.asc())
-      .all();
+    return this.applicationsUtils.findApproved();
   }
 
   async review(
@@ -88,24 +52,21 @@ export class ApplicationsService {
       throw new BadRequestException('Status must be APPROVED or REJECTED');
     }
 
-    const application = this.prisma.client.orm.public.BirthdayApplication;
-    const existing = await application
-      .select('id', 'status')
-      .where({ id })
-      .firstOrThrow();
+    const existing = await this.applicationsUtils.findReviewState(id);
     if (existing.status !== ApplicationStatus.PENDING) {
       throw new ConflictException('Application has already been reviewed');
     }
 
-    const updated = await application
-      .select('id', 'status', 'reviewedAt', 'approvedById')
-      .where({ id, status: ApplicationStatus.PENDING })
-      .update({
+    const updated = await this.applicationsUtils.updateReview(
+      id,
+      ApplicationStatus.PENDING,
+      {
         status: dto.status,
         reviewedAt: new Date(),
         approvedById:
           dto.status === ReviewApplicationStatus.APPROVED ? reviewerId : null,
-      });
+      },
+    );
 
     if (!updated) {
       throw new ConflictException('Application has already been reviewed');
@@ -138,24 +99,18 @@ export class ApplicationsService {
       throw new BadRequestException('A valid birthday is required');
     }
 
-    const departments = this.prisma.client.orm.public.Department;
-    const existingDepartment = await departments
-      .select('id')
-      .where({ name: departmentName })
-      .first();
+    const existingDepartment =
+      await this.applicationsUtils.findDepartmentByName(departmentName);
     let departmentId = existingDepartment?.id;
 
     if (!departmentId) {
       try {
-        const createdDepartment = await departments
-          .select('id')
-          .create({ name: departmentName });
+        const createdDepartment =
+          await this.applicationsUtils.createDepartment(departmentName);
         departmentId = createdDepartment.id;
       } catch (error) {
-        const concurrentDepartment = await departments
-          .select('id')
-          .where({ name: departmentName })
-          .first();
+        const concurrentDepartment =
+          await this.applicationsUtils.findDepartmentByName(departmentName);
         if (!concurrentDepartment) {
           throw error;
         }
@@ -163,16 +118,7 @@ export class ApplicationsService {
       }
     }
 
-    return this.prisma.client.orm.public.BirthdayApplication.select(
-      'id',
-      'applicationNumber',
-      'firstName',
-      'lastName',
-      'birthday',
-      'departmentId',
-      'status',
-      'createdAt',
-    ).create({
+    return this.applicationsUtils.create({
       firstName,
       lastName,
       birthday,

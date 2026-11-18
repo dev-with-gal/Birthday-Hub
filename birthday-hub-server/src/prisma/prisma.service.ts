@@ -3,13 +3,13 @@ import { db } from './db.js';
 
 @Injectable()
 export class PrismaService implements OnModuleInit, OnModuleDestroy {
-  readonly client = db;
+  readonly client = db.orm.public;
 
   async onModuleInit(): Promise<void> {
-    await this.client.connect();
+    await db.connect();
   }
 
   async onModuleDestroy(): Promise<void> {
-    await this.client.close();
+    await db.close();
   }
 }

@@ -25,6 +25,20 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+### Service and database-access layers
+
+`ApplicationsService` handles validation, permissions, and creation/review workflows.
+The injectable `ApplicationsUtils` in `src/applications/applications-utils.ts`
+owns application and department queries through the shared `PrismaService`.
+Keep Prisma query construction in the utils layer; keep business decisions and
+HTTP exceptions in the service.
+
+The same separation applies to `UsersService` / `UsersUtils` and `AuthService` /
+`AuthUtils`, using their module's `users-utils.ts` and `auth-utils.ts` files.
+User validation, password hashing/verification, and token issuance stay in the
+services. Utils select and persist data without making business decisions.
+All utils are singleton Nest providers using the shared `PrismaService`.
+
 ## Project setup
 
 ```bash

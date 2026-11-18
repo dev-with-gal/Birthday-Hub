@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PrismaModule } from '../prisma/prisma.module.js';
 import { AuthController } from './auth.controller.js';
 import { AuthService } from './auth.service.js';
+import { AuthUtils } from './auth-utils.js';
 import { JwtAuthGuard } from './jwt-auth.guard.js';
 import { ACCESS_TOKEN_TTL_SECONDS } from './auth.constants.js';
 
@@ -21,7 +22,7 @@ if (!jwtSecret || jwtSecret.length < 32) {
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtAuthGuard],
+  providers: [AuthService, AuthUtils, JwtAuthGuard],
   exports: [JwtAuthGuard, JwtModule],
 })
 export class AuthModule {}

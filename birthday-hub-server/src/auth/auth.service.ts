@@ -1,14 +1,14 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { scrypt, timingSafeEqual } from 'node:crypto';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { AuthUtils } from './auth-utils.js';
 import { LoginDto } from './dto/login.dto.js';
 import { ACCESS_TOKEN_TTL_SECONDS } from './auth.constants.js';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly authUtils: AuthUtils,
     private readonly jwt: JwtService,
   ) {}
 
@@ -19,14 +19,7 @@ export class AuthService {
         : '';
     const password = loginDto.password;
     const user = email
-      ? await this.prisma.client.orm.public.User.select(
-          'id',
-          'email',
-          'passwordHash',
-          'role',
-        )
-          .where({ email })
-          .first()
+      ? await this.authUtils.findUserByEmail(email)
       : null;
 
     if (

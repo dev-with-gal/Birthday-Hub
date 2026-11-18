@@ -7,53 +7,32 @@ import {
 import { randomBytes, scrypt } from 'node:crypto';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { UsersUtils } from './users-utils.js';
+import type { UpdateUserData } from './user.types.js';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly usersUtils: UsersUtils) {}
 
   async create(createUserDto: CreateUserDto) {
     const email = this.normalizeEmail(createUserDto.email);
     const password = this.validatePassword(createUserDto.password);
-    const existing = await this.prisma.client.orm.public.User.select('id')
-      .where({ email })
-      .first();
+    const existing = await this.usersUtils.findByEmail(email);
 
     if (existing) {
       throw new ConflictException('An account with this email already exists');
     }
 
     const passwordHash = await this.hashPassword(password);
-    return this.prisma.client.orm.public.User.select(
-      'id',
-      'email',
-      'role',
-      'createdAt',
-      'updatedAt',
-    ).create({ email, passwordHash, role: 'EMPLOYEE' });
+    return this.usersUtils.create({ email, passwordHash, role: 'EMPLOYEE' });
   }
 
   findAll() {
-    return this.prisma.client.orm.public.User.select(
-      'id',
-      'email',
-      'role',
-      'createdAt',
-      'updatedAt',
-    ).all();
+    return this.usersUtils.findAll();
   }
 
   async findOne(id: string) {
-    const user = await this.prisma.client.orm.public.User.select(
-      'id',
-      'email',
-      'role',
-      'createdAt',
-      'updatedAt',
-    )
-      .where({ id })
-      .first();
+    const user = await this.usersUtils.findOne(id);
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -63,7 +42,7 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    const updates: { email?: string; passwordHash?: string } = {};
+    const updates: UpdateUserData = {};
 
     if (updateUserDto.email !== undefined) {
       updates.email = this.normalizeEmail(updateUserDto.email);
@@ -77,15 +56,7 @@ export class UsersService {
       return this.findOne(id);
     }
 
-    const updated = await this.prisma.client.orm.public.User.select(
-      'id',
-      'email',
-      'role',
-      'createdAt',
-      'updatedAt',
-    )
-      .where({ id })
-      .update(updates);
+    const updated = await this.usersUtils.update(id, updates);
 
     if (!updated) {
       throw new NotFoundException('User not found');
@@ -96,7 +67,7 @@ export class UsersService {
 
   async remove(id: string) {
     await this.findOne(id);
-    await this.prisma.client.orm.public.User.where({ id }).delete();
+    await this.usersUtils.remove(id);
     return { id };
   }
 
